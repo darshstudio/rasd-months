@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:rasd/main.dart';
+import 'package:rasd_months/main.dart';
 
 void main() {
   setUpAll(() {

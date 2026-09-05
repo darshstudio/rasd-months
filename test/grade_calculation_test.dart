@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rasd/models/grade_record.dart';
+import 'package:rasd_months/models/grade_record.dart';
 
 void main() {
   group('Grade Calculation Engine Tests', () {

@@ -80,7 +80,7 @@ void main() async {
       backgroundColor: AppColors.neutralBackground,
       skipTaskbar: false,
       titleBarStyle: TitleBarStyle.hidden,
-      title: 'تطبيق رصد - درجات الملف',
+      title: 'تطبيق رصد الشهري - درجات الملف',
     );
 
     windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -108,7 +108,7 @@ class RasdApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => GradeProvider()),
       ],
       child: MaterialApp(
-        title: 'برنامج رصد - درجات الملف',
+        title: 'برنامج رصد الشهري - درجات الملف',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         locale: const Locale('ar', 'EG'),
@@ -144,7 +144,7 @@ class _AppRootShellState extends State<AppRootShell> {
           return const Scaffold(
             body: Column(
               children: [
-                CustomTitleBar(title: "تطبيق رصد - درجات الملف"),
+                CustomTitleBar(title: "تطبيق رصد الشهري - درجات الملف"),
                 Expanded(
                   child: Center(child: CircularProgressIndicator()),
                 ),

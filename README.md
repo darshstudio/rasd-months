@@ -1,11 +1,11 @@
-# تطبيق رصد درجات الملف الشهري (Rasd Desktop App v3.0) 📊🎓
+# تطبيق رصد الشهري (Rasd Months Desktop App v3.0) 📊🎓
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.13+-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.1+-0175C2?style=for-the-badge&logo=dart&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows%20%7C%20macOS-153243?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+![Identifier](https://img.shields.io/badge/App%20ID-org.tadween.rasd--months-blue?style=for-the-badge)
+![Formats](https://img.shields.io/badge/Outputs-.exe%20%7C%20.deb%20%7C%20.rpm%20%7C%20AppImage%20%7C%20tar.gz-success?style=for-the-badge)
 
-**تطبيق رصد** هو النظام المعياري المتكامل لإدارة ورصد وتجميع درجات الملف الشهري وبنود التقييم للمرحلتين الابتدائية والإعدادية بالمدارس الرسمية واللغات وخاصة المدارس المصرية اليابانية. صُمم التطبيق خصيصاً ليعمل بكفاءة عالية على أجهزة سطح المكتب (Linux & Windows) مع التزام كامل بالضوابط والتعليمات الوزارية المعمول بها دون أدنى تقريب أو جبر للكسور.
+**تطبيق رصد الشهري** (`org.tadween.rasd-months`) هو النظام المعياري المتكامل لإدارة ورصد وتجميع درجات الملف الشهري وبنود التقييم للمرحلتين الابتدائية والإعدادية بالمدارس الرسمية واللغات وخاصة المدارس المصرية اليابانية. صُمم التطبيق خصيصاً ليعمل بكفاءة عالية على أجهزة سطح المكتب (Linux & Windows) مع التزام كامل بالضوابط والتعليمات الوزارية المعمول بها دون أدنى تقريب أو جبر للكسور.
 
 ---
 
@@ -44,8 +44,23 @@
 | **SQLite / sqflite_ffi** | قاعدة بيانات محليّة سريعة ومحمية لحفظ السنوات الدراسية والسجلات |
 | **Provider** | إدارة حالة التطبيق (State Management) |
 | **PDF & Printing** | بناء وتصميم وتقسيم صفحات الـ PDF والطباعة المباشرة |
-| **Excel (xlsx)** | إنشاء وتحديد ومعالجة ملفات الإكسيل استيراداً وتصديراً |
-| **GitHub Actions** | البناء التلقائي ورفع الحزم التنفيذية لـ Linux و Windows |
+| **Excel (xlsx)** | إنشاء وتحدد ومعالجة ملفات الإكسيل استيراداً وتصديراً |
+| **Inno Setup & Packaging** | توليد مثبّتات وحزم التشغيل لـ Windows و Linux |
+
+---
+
+## 📦 صيغ وحزم البناء المتاحة (Build Packages & Formats)
+
+يقوم سير عمل GitHub Actions ببناء كافة الصيغ المعيارية المطلوبة لأنظمة Windows و Linux تلقائياً:
+
+| النظام | الصيغ المتوفرة | الوصف |
+| :--- | :--- | :--- |
+| **Windows** | `.exe` (Installer) | تثبيت قياسي كامل عبر Inno Setup (`rasd-months-setup.exe`) |
+| **Windows** | `.zip` (Portable) | نسخة محمولة جاهزة للتشغيل المباشر دون تثبيت |
+| **Linux** | `.deb` | حزمة تثبيت مخصصة لأنظمة Ubuntu / Debian |
+| **Linux** | `.rpm` | حزمة تثبيت مخصصة لأنظمة RedHat / Fedora / SUSE |
+| **Linux** | `AppImage` | حزمة محمولة تعمل على كافة توزيعات لينكس المحدثة |
+| **Linux** | `.tar.gz` | أرشفة مضغوطة للملف التنفيذي والمكتبات برمز النظام |
 
 ---
 
@@ -68,26 +83,7 @@ flutter pub get
 flutter run -d linux # أو windows
 ```
 
-### 3. بناء النسخة التنفيذية للإنتاج:
-```bash
-# بناء حزمة Linux
-flutter build linux --release
-
-# بناء حزمة Windows
-flutter build windows --release
-```
-
 ---
 
-## 📦 حزم البناء والتحميل التلقائي (CI/CD Artifacts)
-
-يحتوي المستودع على سير عمل **GitHub Actions** مُعد مسبقاً في الملف [`.github/workflows/build.yml`](.github/workflows/build.yml). عند رفع أي التزامات جديدة (Push)، يجرى البناء التلقائي للحزم التنفيذية لكل من:
-- **Linux 64-bit Bundle** (`.tar.gz`)
-- **Windows 64-bit Bundle** (`.zip`)
-
-يمكنك الانتقال إلى تبويب **Actions** في مستودع GitHub وتحميل الملفات التنفيذية جاهزة للاستخدام بدون الحاجة لبيئة تطوير.
-
----
-
-## 📝 الترخيص (License)
-هذا المشروع مرخص بموجب رخصة MIT - راجع ملف [LICENSE](LICENSE) لمزيد من التفاصيل.
+## 📄 الترخيص (License)
+هذا المشروع مرخص بموجب رخصة MIT.

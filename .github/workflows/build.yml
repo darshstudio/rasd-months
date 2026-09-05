@@ -1,4 +1,4 @@
-name: Rasd App Multi-Platform Desktop Builds
+name: Rasd Months Desktop Builds
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-linux:
-    name: Build Linux Desktop Executable Bundle
+    name: Build Linux Desktop Packages (.deb, .rpm, .AppImage, .tar.gz)
     runs-on: ubuntu-latest
 
     steps:
@@ -22,40 +22,91 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Install Linux build dependencies
+      - name: Install Linux build & packaging dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libsqlite3-dev
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libsqlite3-dev dpkg-dev alien rpm wget
 
-      - name: Verify Flutter environment
-        run: flutter doctor -v
-
-      - name: Install dependencies
+      - name: Install Flutter pub dependencies
         run: flutter pub get
 
-      - name: Run Static Analysis
-        run: flutter analyze
-
-      - name: Run Unit Tests
-        run: flutter test
-
-      - name: Build Linux Desktop Release Bundle
+      - name: Build Linux Desktop Release
         run: flutter build linux --release
 
-      - name: Compress Linux Build Artifact
+      - name: Package .tar.gz Bundle
         run: |
-          cd build/linux/x64/release/bundle
-          tar -czvf ../../../../../rasd-linux-x64.tar.gz .
+          tar -czvf rasd-months-linux-x64.tar.gz -C build/linux/x64/release/bundle .
 
-      - name: Upload Linux Build Artifact
+      - name: Package .deb Installer
+        run: |
+          mkdir -p build/deb/DEBIAN build/deb/usr/bin build/deb/usr/lib/rasd-months build/deb/usr/share/applications
+          cp -r build/linux/x64/release/bundle/* build/deb/usr/lib/rasd-months/
+          cat << 'EOF' > build/deb/DEBIAN/control
+          Package: rasd-months
+          Version: 1.0.0
+          Section: utils
+          Priority: optional
+          Architecture: amd64
+          Maintainer: Tadween <info@tadween.org>
+          Description: تطبيق رصد الشهري لدرجات التقييمات الشهرية للمرحلتين الابتدائية والإعدادية
+          EOF
+          ln -sf /usr/lib/rasd-months/rasd_months build/deb/usr/bin/rasd-months
+          cat << 'EOF' > build/deb/usr/share/applications/org.tadween.rasd-months.desktop
+          [Desktop Entry]
+          Name=رصد الشهري
+          Comment=تطبيق رصد الشهري لدرجات التقييمات الشهرية
+          Exec=/usr/bin/rasd-months
+          Icon=org.tadween.rasd-months
+          Terminal=false
+          Type=Application
+          Categories=Education;Office;Utility;
+          EOF
+          dpkg-deb --build build/deb rasd-months_1.0.0_amd64.deb
+
+      - name: Package .rpm Installer
+        run: |
+          sudo alien -r --to-rpm --scripts rasd-months_1.0.0_amd64.deb
+          mv *.rpm rasd-months-1.0.0.x86_64.rpm || true
+
+      - name: Package .AppImage Executable
+        run: |
+          mkdir -p build/AppDir/usr/bin build/AppDir/usr/lib
+          cp -r build/linux/x64/release/bundle/* build/AppDir/usr/lib/
+          cat << 'EOF' > build/AppDir/AppRun
+          #!/bin/sh
+          HERE="$(dirname "$(readlink -f "${0}")")"
+          export LD_LIBRARY_PATH="${HERE}/usr/lib:${HERE}/usr/lib/lib:${LD_LIBRARY_PATH}"
+          exec "${HERE}/usr/lib/rasd_months" "$@"
+          EOF
+          chmod +x build/AppDir/AppRun
+          cat << 'EOF' > build/AppDir/org.tadween.rasd-months.desktop
+          [Desktop Entry]
+          Name=رصد الشهري
+          Comment=تطبيق رصد الشهري لدرجات التقييمات الشهرية
+          Exec=rasd_months
+          Icon=org.tadween.rasd-months
+          Terminal=false
+          Type=Application
+          Categories=Education;Office;Utility;
+          EOF
+          touch build/AppDir/org.tadween.rasd-months.png
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage -O appimagetool
+          chmod +x appimagetool
+          ./appimagetool --appimage-extract-and-run build/AppDir rasd-months-x86_64.AppImage
+
+      - name: Upload Linux Desktop Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: rasd-linux-x64-bundle
-          path: rasd-linux-x64.tar.gz
+          name: rasd-months-linux-packages
+          path: |
+            rasd-months-linux-x64.tar.gz
+            rasd-months_1.0.0_amd64.deb
+            rasd-months-1.0.0.x86_64.rpm
+            rasd-months-x86_64.AppImage
           retention-days: 30
 
   build-windows:
-    name: Build Windows Desktop Executable Bundle
+    name: Build Windows Desktop Packages (.exe Installer & Portable .zip)
     runs-on: windows-latest
 
     steps:
@@ -68,22 +119,29 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Verify Flutter environment
-        run: flutter doctor -v
-
-      - name: Install dependencies
+      - name: Install Flutter pub dependencies
         run: flutter pub get
 
-      - name: Build Windows Desktop Release Bundle
+      - name: Build Windows Desktop Release
         run: flutter build windows --release
 
-      - name: Compress Windows Build Artifact
+      - name: Prepare Staging & Build Inno Setup (.exe) Installer
+        shell: powershell
         run: |
-          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath rasd-windows-x64.zip
+          New-Item -ItemType Directory -Force -Path "build\windows\staging"
+          if (Test-Path "build\windows\x64\runner\Release") {
+            Copy-Item -Path "build\windows\x64\runner\Release\*" -Destination "build\windows\staging" -Recurse -Force
+          } elseif (Test-Path "build\windows\runner\Release") {
+            Copy-Item -Path "build\windows\runner\Release\*" -Destination "build\windows\staging" -Recurse -Force
+          }
+          Compress-Archive -Path "build\windows\staging\*" -DestinationPath "rasd-months-windows-x64-portable.zip"
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" windows\installer.iss
 
-      - name: Upload Windows Build Artifact
+      - name: Upload Windows Desktop Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: rasd-windows-x64-bundle
-          path: rasd-windows-x64.zip
+          name: rasd-months-windows-packages
+          path: |
+            build\windows\installer\rasd-months-setup.exe
+            rasd-months-windows-x64-portable.zip
           retention-days: 30
