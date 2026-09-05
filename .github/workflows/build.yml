@@ -102,6 +102,7 @@ jobs:
 
       - name: Upload Linux Desktop Artifacts
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: rasd-months-linux-packages
           path: |
@@ -146,6 +147,7 @@ jobs:
 
       - name: Upload Windows Desktop Artifacts
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: rasd-months-windows-packages
           path: |
