@@ -7,6 +7,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-linux:
     name: Build Linux Desktop Packages (.deb, .rpm, .AppImage, .tar.gz)
@@ -100,6 +103,23 @@ jobs:
           ./appimagetool --appimage-extract
           ARCH=x86_64 ./squashfs-root/AppRun --no-appstream build/AppDir rasd-months-x86_64.AppImage
 
+      - name: Publish Linux Packages to GitHub Release
+        uses: softprops/action-gh-release@v2
+        continue-on-error: true
+        with:
+          tag_name: v1.0.0
+          name: "رصد الشهري - الإصدار 1.0.0"
+          body: "الحزم التنفيذية الرسمية لتطبيق رصد الشهري لنظامي Windows و Linux."
+          draft: false
+          prerelease: false
+          files: |
+            rasd-months-linux-x64.tar.gz
+            rasd-months_1.0.0_amd64.deb
+            rasd-months-1.0.0.x86_64.rpm
+            rasd-months-x86_64.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload Linux Desktop Artifacts
         uses: actions/upload-artifact@v4
         continue-on-error: true
@@ -144,6 +164,21 @@ jobs:
           }
           Compress-Archive -Path "windows\staging\*" -DestinationPath "rasd-months-windows-x64-portable.zip"
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" windows\installer.iss
+
+      - name: Publish Windows Packages to GitHub Release
+        uses: softprops/action-gh-release@v2
+        continue-on-error: true
+        with:
+          tag_name: v1.0.0
+          name: "رصد الشهري - الإصدار 1.0.0"
+          body: "الحزم التنفيذية الرسمية لتطبيق رصد الشهري لنظامي Windows و Linux."
+          draft: false
+          prerelease: false
+          files: |
+            build/windows/installer/rasd-months-setup.exe
+            rasd-months-windows-x64-portable.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Windows Desktop Artifacts
         uses: actions/upload-artifact@v4
