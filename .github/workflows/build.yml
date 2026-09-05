@@ -92,7 +92,7 @@ jobs:
           touch build/AppDir/org.tadween.rasd-months.png
           wget -q https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage -O appimagetool
           chmod +x appimagetool
-          ./appimagetool --appimage-extract-and-run build/AppDir rasd-months-x86_64.AppImage
+          ARCH=x86_64 ./appimagetool --appimage-extract-and-run build/AppDir rasd-months-x86_64.AppImage
 
       - name: Upload Linux Desktop Artifacts
         uses: actions/upload-artifact@v4
@@ -128,13 +128,14 @@ jobs:
       - name: Prepare Staging & Build Inno Setup (.exe) Installer
         shell: powershell
         run: |
-          New-Item -ItemType Directory -Force -Path "build\windows\staging"
+          New-Item -ItemType Directory -Force -Path "windows\staging"
+          New-Item -ItemType Directory -Force -Path "build\windows\installer"
           if (Test-Path "build\windows\x64\runner\Release") {
-            Copy-Item -Path "build\windows\x64\runner\Release\*" -Destination "build\windows\staging" -Recurse -Force
+            Copy-Item -Path "build\windows\x64\runner\Release\*" -Destination "windows\staging" -Recurse -Force
           } elseif (Test-Path "build\windows\runner\Release") {
-            Copy-Item -Path "build\windows\runner\Release\*" -Destination "build\windows\staging" -Recurse -Force
+            Copy-Item -Path "build\windows\runner\Release\*" -Destination "windows\staging" -Recurse -Force
           }
-          Compress-Archive -Path "build\windows\staging\*" -DestinationPath "rasd-months-windows-x64-portable.zip"
+          Compress-Archive -Path "windows\staging\*" -DestinationPath "rasd-months-windows-x64-portable.zip"
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" windows\installer.iss
 
       - name: Upload Windows Desktop Artifacts

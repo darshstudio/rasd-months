@@ -6,7 +6,7 @@ AppPublisher=Tadween
 AppPublisherURL=https://github.com/darshstudio/rasd-months
 DefaultDirName={autopf}\Tadween\RasdMonths
 DefaultGroupName=رصد الشهري
-OutputDir=build\windows\installer
+OutputDir=..\build\windows\installer
 OutputBaseFilename=rasd-months-setup
 Compression=lzma2
 SolidCompression=yes
@@ -16,7 +16,7 @@ WizardStyle=modern
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "build\windows\staging\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "staging\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\رصد الشهري"; Filename: "{app}\rasd_months.exe"
