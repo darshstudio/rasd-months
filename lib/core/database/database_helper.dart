@@ -54,6 +54,10 @@ class DatabaseHelper {
       path,
       options: OpenDatabaseOptions(
         version: 1,
+        onOpen: (db) async {
+          await db.execute('PRAGMA journal_mode = WAL;');
+          await db.execute('PRAGMA synchronous = NORMAL;');
+        },
         onCreate: (db, version) async {
           await db.execute('''
             CREATE TABLE academic_years (
@@ -133,6 +137,8 @@ class DatabaseHelper {
         version: 1,
         onCreate: _createYearDbSchema,
         onOpen: (db) async {
+          await db.execute('PRAGMA journal_mode = WAL;');
+          await db.execute('PRAGMA synchronous = NORMAL;');
           await db.execute('''
             CREATE TABLE IF NOT EXISTS grade_records (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -149,6 +155,13 @@ class DatabaseHelper {
               UNIQUE(seating_number, subject_id, assessment_item_id, term)
             )
           ''');
+
+          // Create performance indexes if missing
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_students_stage_class ON students(stage, class_name, seating_number);');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_subjects_grade ON subjects(grade_level);');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_assessment_items_sub ON assessment_items(subject_id);');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_grade_records_sub_term ON grade_records(subject_id, term);');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_grade_records_seating_sub_term ON grade_records(seating_number, subject_id, term);');
         },
       ),
     );
@@ -220,6 +233,13 @@ class DatabaseHelper {
         UNIQUE(seating_number, subject_id, assessment_item_id, term)
       )
     ''');
+
+    // Create Indexes
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_students_stage_class ON students(stage, class_name, seating_number);');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_subjects_grade ON subjects(grade_level);');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_assessment_items_sub ON assessment_items(subject_id);');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_grade_records_sub_term ON grade_records(subject_id, term);');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_grade_records_seating_sub_term ON grade_records(seating_number, subject_id, term);');
   }
 
   /// Helper to get first int value from query
@@ -326,26 +346,30 @@ class DatabaseHelper {
           whereArgs: [gradeLevel, subName],
         );
 
+        int subId;
         if (match.isEmpty) {
-          final subId = await db.insert('subjects', {
+          subId = await db.insert('subjects', {
             'name': subName,
             'stage': stage,
             'grade_level': gradeLevel,
             'assessment_type': subType,
           });
-
-          if (subType == 'grades') {
-            await _insertPrimaryItems(db, subId);
-          }
         } else {
           final existingSub = match.first;
-          final subId = existingSub['id'] as int;
+          subId = existingSub['id'] as int;
           if (existingSub['assessment_type'] != subType) {
             await db.update('subjects', {'assessment_type': subType}, where: 'id = ?', whereArgs: [subId]);
           }
-          if (subType == 'grades') {
-            final itemsCount = _firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM assessment_items WHERE subject_id = ?', [subId]));
-            if (itemsCount == null || itemsCount == 0) {
+        }
+
+        if (subType == 'grades') {
+          final isPrep = stage == 'الحلقة الإعدادية' || gradeLevel.contains('إعدادي');
+          final itemsCount = _firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM assessment_items WHERE subject_id = ?', [subId]));
+          if (itemsCount == null || itemsCount == 0 || (isPrep && itemsCount != 4) || (!isPrep && itemsCount != 5)) {
+            await db.delete('assessment_items', where: 'subject_id = ?', whereArgs: [subId]);
+            if (isPrep) {
+              await _insertPrepItems(db, subId);
+            } else {
               await _insertPrimaryItems(db, subId);
             }
           }
@@ -354,7 +378,7 @@ class DatabaseHelper {
     }
   }
 
-  /// Assessment Items for all graded subjects (5+5+10+15+5 = 40)
+  /// Assessment Items for Primary Stage (5+5+10+15+5 = 40)
   Future<void> _insertPrimaryItems(Database db, int subjectId) async {
     final items = [
       {'name': 'واجب منزلي', 'max': 5.0, 'm3': 1},
@@ -362,6 +386,25 @@ class DatabaseHelper {
       {'name': 'تقييم أسبوعي', 'max': 10.0, 'm3': 1},
       {'name': 'اختبارات الشهور', 'max': 15.0, 'm3': 0},
       {'name': 'مواظبة وسلوك', 'max': 5.0, 'm3': 1},
+    ];
+
+    for (final item in items) {
+      await db.insert('assessment_items', {
+        'subject_id': subjectId,
+        'item_name': item['name'],
+        'max_score': item['max'],
+        'exists_in_month_3': item['m3'],
+      });
+    }
+  }
+
+  /// Assessment Items for Preparatory Stage (20+10+10+15)
+  Future<void> _insertPrepItems(Database db, int subjectId) async {
+    final items = [
+      {'name': 'تقييمات أسبوعية', 'max': 20.0, 'm3': 1},
+      {'name': 'واجبات منزلية', 'max': 10.0, 'm3': 1},
+      {'name': 'السلوك والمواظبة', 'max': 10.0, 'm3': 1},
+      {'name': 'اختبارات الشهور', 'max': 15.0, 'm3': 0},
     ];
 
     for (final item in items) {

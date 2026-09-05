@@ -146,10 +146,15 @@ class _YearSelectionScreenState extends State<YearSelectionScreen> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Icon(
-                            Icons.school_rounded,
-                            size: 64,
-                            color: AppColors.primaryDark,
+                          Image.asset(
+                            'assets/images/app_logo_full.png',
+                            height: 90,
+                            fit: BoxFit.contain,
+                            errorBuilder: (ctx, err, stack) => const Icon(
+                              Icons.school_rounded,
+                              size: 64,
+                              color: AppColors.primaryDark,
+                            ),
                           ),
                           const SizedBox(height: 16),
                           const Text(
@@ -216,28 +221,30 @@ class _YearSelectionScreenState extends State<YearSelectionScreen> {
                                         await yearProv.selectYear(year);
                                         widget.onYearSelected();
                                       },
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: AnimatedContainer(
+                                        duration: const Duration(milliseconds: 150),
+                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                                         decoration: BoxDecoration(
                                           color: isSelected
-                                              ? AppColors.secondaryDark.withValues(alpha: 0.12)
-                                              : AppColors.white,
-                                          borderRadius: BorderRadius.circular(8),
+                                              ? AppColors.lightSurface
+                                              : AppColors.lightSurface,
+                                          borderRadius: BorderRadius.circular(12),
                                           border: Border.all(
                                             color: isSelected
-                                                ? AppColors.secondaryDark
+                                                ? AppColors.primaryDark
                                                 : AppColors.mutedBorder,
-                                            width: isSelected ? 1.8 : 1,
+                                            width: isSelected ? 2 : 1,
                                           ),
+                                          boxShadow: isSelected ? [AppColors.cardShadow] : [],
                                         ),
                                         child: Row(
                                           children: [
                                             Icon(
                                               Icons.calendar_month_rounded,
                                               color: isSelected
-                                                  ? AppColors.secondaryDark
-                                                  : AppColors.primaryDark,
+                                                  ? AppColors.primaryDark
+                                                  : AppColors.secondaryDark,
                                             ),
                                             const SizedBox(width: 12),
                                             Expanded(
@@ -247,8 +254,8 @@ class _YearSelectionScreenState extends State<YearSelectionScreen> {
                                                   Text(
                                                     "العام الدراسي: ${year.name}",
                                                     style: TextStyle(
-                                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                                      color: AppColors.primaryDark,
+                                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                                                      color: AppColors.textPrimary,
                                                       fontSize: 15,
                                                     ),
                                                   ),
@@ -256,7 +263,7 @@ class _YearSelectionScreenState extends State<YearSelectionScreen> {
                                                     year.isLanguageSchool ? "نوع المدرسة: لغات" : "نوع المدرسة: عربي / عادية",
                                                     style: TextStyle(
                                                       fontSize: 11,
-                                                      color: year.isLanguageSchool ? AppColors.secondaryDark : AppColors.mutedBorder,
+                                                      color: year.isLanguageSchool ? AppColors.primaryDark : AppColors.secondaryDark,
                                                       fontWeight: FontWeight.w600,
                                                     ),
                                                   ),
@@ -267,7 +274,7 @@ class _YearSelectionScreenState extends State<YearSelectionScreen> {
                                               const SizedBox(width: 8),
                                               const Icon(
                                                 Icons.check_circle_rounded,
-                                                color: AppColors.secondaryDark,
+                                                color: AppColors.primaryDark,
                                               ),
                                             ],
                                           ],
@@ -279,10 +286,20 @@ class _YearSelectionScreenState extends State<YearSelectionScreen> {
                               ),
                               const SizedBox(height: 20),
                             ],
-                            ElevatedButton.icon(
-                              onPressed: () => _showCreateYearDialog(context),
-                              icon: const Icon(Icons.add_rounded),
-                              label: const Text("إنشاء عام دراسي جديد"),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 48,
+                              child: ElevatedButton.icon(
+                                onPressed: () => _showCreateYearDialog(context),
+                                icon: const Icon(Icons.add_rounded, size: 20),
+                                label: const Text(
+                                  "إنشاء عام دراسي جديد",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ],

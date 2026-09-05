@@ -68,30 +68,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       _buildTermTabs(),
                       const SizedBox(height: 28),
 
-                      // Two Main Stage Cards: Primary & Preparatory (Seamless pure white)
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Card 1: الحلقة الابتدائية (Primary Stage)
-                          Expanded(
-                            child: _buildStageCard(
-                              stageTitle: "الحلقة الابتدائية",
-                              subtitle: "تضم الصفوف من الأول إلى السادس الابتدائي",
-                              icon: Icons.child_care_rounded,
-                              grades: _primaryGrades,
-                            ),
-                          ),
-                          const SizedBox(width: 24),
-                          // Card 2: الحلقة الإعدادية (Preparatory Stage - Grades 1 & 2 ONLY)
-                          Expanded(
-                            child: _buildStageCard(
-                              stageTitle: "الحلقة الإعدادية",
-                              subtitle: "تضم الصفين الأول والثاني الإعدادي فقط",
-                              icon: Icons.school_rounded,
-                              grades: _prepGrades,
-                            ),
-                          ),
-                        ],
+                      // Two Main Stage Cards: Primary & Preparatory (Responsive Layout)
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final isNarrow = constraints.maxWidth < 750;
+                          final primaryCard = _buildStageCard(
+                            stageTitle: "الحلقة الابتدائية",
+                            subtitle: "تضم الصفوف من الأول إلى السادس الابتدائي",
+                            icon: Icons.child_care_rounded,
+                            grades: _primaryGrades,
+                          );
+                          final prepCard = _buildStageCard(
+                            stageTitle: "الحلقة الإعدادية",
+                            subtitle: "تضم الصفين الأول والثاني الإعدادي فقط",
+                            icon: Icons.school_rounded,
+                            grades: _prepGrades,
+                          );
+
+                          if (isNarrow) {
+                            return Column(
+                              children: [
+                                primaryCard,
+                                const SizedBox(height: 24),
+                                prepCard,
+                              ],
+                            );
+                          }
+
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: primaryCard),
+                              const SizedBox(width: 24),
+                              Expanded(child: prepCard),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -104,14 +116,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  /// Build Term Tabs Header (Seamless pure white without borders or shadows)
+  /// Build Term Tabs Header (eCoursie Filter Pill style)
   Widget _buildTermTabs() {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.lightSurface,
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.filterPillBackground,
+        borderRadius: BorderRadius.circular(40),
+        border: Border.all(color: AppColors.mutedBorder),
       ),
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(5),
       child: Row(
         children: [
           Expanded(
@@ -134,7 +147,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  /// Build Stage Card (Seamless pure white without borders or shadows)
+  /// Build Stage Card (eCoursie Course Card style with soft floating shadow & rounded action buttons)
   Widget _buildStageCard({
     required String stageTitle,
     required String subtitle,
@@ -144,21 +157,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.lightSurface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [AppColors.cardShadow],
+        border: Border.all(color: AppColors.mutedBorder.withValues(alpha: 0.6)),
       ),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.secondaryDark.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.cardLavender,
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: AppColors.primaryDark, size: 26),
+                child: Icon(icon, color: AppColors.primaryPurple, size: 26),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -171,7 +186,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         fontFamily: AppTheme.fontFamily,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primaryDark,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -180,7 +195,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       style: const TextStyle(
                         fontFamily: AppTheme.fontFamily,
                         fontSize: 12,
-                        color: AppColors.secondaryDark,
+                        color: AppColors.secondaryText,
                       ),
                     ),
                   ],
@@ -188,12 +203,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 20),
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: grades.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 8),
+            separatorBuilder: (_, _) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
               final grade = grades[index];
               return InkWell(
@@ -209,18 +224,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   );
                 },
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(14),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
-                    color: AppColors.secondaryDark.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(10),
+                    color: AppColors.lightSurface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.mutedBorder, width: 1),
                   ),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.class_outlined,
-                        color: AppColors.secondaryDark,
+                        color: AppColors.primaryDark,
                         size: 20,
                       ),
                       const SizedBox(width: 12),
@@ -230,15 +246,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           style: const TextStyle(
                             fontFamily: AppTheme.fontFamily,
                             fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primaryDark,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ),
-                      const Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: AppColors.secondaryDark,
-                        size: 14,
+                      Container(
+                        padding: const EdgeInsets.all(7),
+                        decoration: const BoxDecoration(
+                          color: AppColors.primaryDark,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back_rounded, // Left arrow for RTL
+                          color: Colors.white,
+                          size: 13,
+                        ),
                       ),
                     ],
                   ),
@@ -267,13 +290,14 @@ class _TermTabButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        height: 48,
+      borderRadius: BorderRadius.circular(30),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        height: 44,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryDark : AppColors.secondaryDark.withValues(alpha: 0.06),
-          borderRadius: BorderRadius.circular(8),
+          color: isSelected ? AppColors.primaryDark : Colors.transparent,
+          borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
           title,
@@ -281,10 +305,11 @@ class _TermTabButton extends StatelessWidget {
             fontFamily: AppTheme.fontFamily,
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-            color: isSelected ? AppColors.white : AppColors.primaryDark,
+            color: isSelected ? Colors.white : AppColors.secondaryDark,
           ),
         ),
       ),
     );
   }
 }
+

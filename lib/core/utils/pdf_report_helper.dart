@@ -232,7 +232,7 @@ class PdfReportHelper {
         textDirection: pw.TextDirection.rtl,
         build: (pw.Context context) {
           return [
-            // Header
+            // Header (RTL Page Layout: Right = School info, Left = Date/Class)
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
@@ -240,10 +240,10 @@ class PdfReportHelper {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      schoolName.isEmpty ? "المدرسة: ...................." : schoolName,
-                      style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold, color: primaryColor, font: font),
+                      className != null && className != 'الكل' ? "الفصل: $className" : "جميع الفصول",
+                      style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, font: font),
                     ),
-                    pw.Text("العام الدراسي: $academicYearName", style: pw.TextStyle(fontSize: 10, font: font)),
+                    pw.Text("تاريخ الاستخراج: ${DateTime.now().toString().split(' ').first}", style: pw.TextStyle(fontSize: 9, font: font)),
                   ],
                 ),
                 pw.Column(
@@ -259,10 +259,10 @@ class PdfReportHelper {
                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                   children: [
                     pw.Text(
-                      className != null && className != 'الكل' ? "الفصل: $className" : "جميع الفصول",
-                      style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, font: font),
+                      schoolName.isEmpty ? "المدرسة: ...................." : schoolName,
+                      style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold, color: primaryColor, font: font),
                     ),
-                    pw.Text("تاريخ الاستخراج: ${DateTime.now().toString().split(' ').first}", style: pw.TextStyle(fontSize: 9, font: font)),
+                    pw.Text("العام الدراسي: $academicYearName", style: pw.TextStyle(fontSize: 10, font: font)),
                   ],
                 ),
               ],
@@ -273,6 +273,7 @@ class PdfReportHelper {
 
             // Grade Table
             pw.TableHelper.fromTextArray(
+              tableDirection: pw.TextDirection.rtl,
               border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.8),
               headerDecoration: pw.BoxDecoration(color: primaryColor),
               headerHeight: 25,
@@ -295,8 +296,8 @@ class PdfReportHelper {
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
               children: [
-                pw.Text("مُعِد الكشف: ....................", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, font: font)),
                 pw.Text("يعتمد مدير المدرسة: ....................", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, font: font)),
+                pw.Text("مُعِد الكشف: ....................", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, font: font)),
               ],
             ),
           ];
@@ -425,12 +426,19 @@ class PdfReportHelper {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                // Top Header
+                // Top Header (RTL Page Layout: Right = Ministry/School info, Left = Year/Term info)
                 pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
                     pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text("العام الدراسي: $academicYearName", style: pw.TextStyle(fontSize: 10, font: font)),
+                        pw.Text("$termText - $monthText", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, font: font)),
+                      ],
+                    ),
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.end,
                       children: [
                         pw.Text("جمهورية مصر العربية", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, font: font)),
                         pw.Text("وزارة التربية والتعليم", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, font: font)),
@@ -438,13 +446,6 @@ class PdfReportHelper {
                           schoolName.trim().isEmpty ? "المدرسة: ...................." : schoolName.trim(),
                           style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold, color: primaryColor, font: font),
                         ),
-                      ],
-                    ),
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.end,
-                      children: [
-                        pw.Text("العام الدراسي: $academicYearName", style: pw.TextStyle(fontSize: 10, font: font)),
-                        pw.Text("$termText - $monthText", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, font: font)),
                       ],
                     ),
                   ],
@@ -467,7 +468,7 @@ class PdfReportHelper {
                 ),
                 pw.SizedBox(height: 14),
 
-                // Student Info Box
+                // Student Info Box (RTL: Right = Student Name, Left = Class Name)
                 pw.Container(
                   padding: const pw.EdgeInsets.all(10),
                   decoration: pw.BoxDecoration(
@@ -478,10 +479,10 @@ class PdfReportHelper {
                   child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text("اسم الطالب: ${student.name}", style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold, color: primaryColor, font: font)),
-                      pw.Text("رقم الجلوس: ${student.seatingNumber}", style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold, font: font)),
-                      pw.Text("الصف: $gradeLevel", style: pw.TextStyle(fontSize: 10, font: font)),
                       pw.Text("الفصل: ${student.className}", style: pw.TextStyle(fontSize: 10, font: font)),
+                      pw.Text("الصف: $gradeLevel", style: pw.TextStyle(fontSize: 10, font: font)),
+                      pw.Text("رقم الجلوس: ${student.seatingNumber}", style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold, font: font)),
+                      pw.Text("اسم الطالب: ${student.name}", style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold, color: primaryColor, font: font)),
                     ],
                   ),
                 ),
@@ -494,6 +495,7 @@ class PdfReportHelper {
                 ),
                 pw.SizedBox(height: 6),
                 pw.TableHelper.fromTextArray(
+                  tableDirection: pw.TextDirection.rtl,
                   border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.8),
                   headerDecoration: pw.BoxDecoration(color: primaryColor),
                   headerHeight: 24,
@@ -510,12 +512,12 @@ class PdfReportHelper {
                 ),
                 pw.Spacer(),
 
-                // Signatures Footer (Teacher & Principal only)
+                // Signatures Footer (Teacher & Principal only, RTL layout)
                 pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
                   children: [
-                    pw.Text("معلم / معلمة المادة: ....................", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, font: font)),
                     pw.Text("يعتمد مدير المدرسة: ....................", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, font: font)),
+                    pw.Text("معلم / معلمة المادة: ....................", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, font: font)),
                   ],
                 ),
               ],

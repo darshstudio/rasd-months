@@ -52,91 +52,134 @@ class _StageScreenState extends State<StageScreen> {
               ),
             ),
           Expanded(
-            child: Row(
-              children: [
-                // Fixed Width Sidebar (240px) - Pure white seamless without border line
-                Container(
-                  width: 240,
-                  color: AppColors.lightSurface,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.school_rounded, color: AppColors.primaryDark, size: 22),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                widget.gradeLevel,
-                                style: const TextStyle(
-                                  fontFamily: AppTheme.fontFamily,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: AppColors.primaryDark,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: ListView.separated(
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                          itemCount: _sidebarItems.length,
-                          separatorBuilder: (_, _) => const SizedBox(height: 4),
-                          itemBuilder: (context, index) {
-                            final item = _sidebarItems[index];
-                            final isSelected = _selectedSidebarIndex == index;
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompact = constraints.maxWidth < 820;
+                final sidebarWidth = isCompact ? 68.0 : 240.0;
 
-                            return InkWell(
-                              onTap: () => setState(() => _selectedSidebarIndex = index),
-                              borderRadius: BorderRadius.circular(8),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColors.secondaryDark.withValues(alpha: 0.12)
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      item['icon'] as IconData,
-                                      size: 20,
-                                      color: isSelected
-                                          ? AppColors.secondaryDark
-                                          : AppColors.primaryDark,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Text(
-                                      item['title'] as String,
-                                      style: TextStyle(
-                                        fontFamily: AppTheme.fontFamily,
-                                        fontSize: 13,
-                                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                        color: isSelected
-                                            ? AppColors.secondaryDark
-                                            : AppColors.primaryDark,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                return Row(
+                  children: [
+                    // Unified Administrative Sidebar (240px or 68px compact)
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: sidebarWidth,
+                      decoration: const BoxDecoration(
+                        color: AppColors.neutralBackground,
                       ),
-                    ],
-                  ),
-                ),
-                // Main View Canvas for Selected Sidebar View - Pure white seamless
-                Expanded(
-                  child: _buildSelectedView(),
-                ),
-              ],
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                            child: Row(
+                              mainAxisAlignment: isCompact ? MainAxisAlignment.center : MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryDark.withValues(alpha: 0.08),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(Icons.school_rounded, color: AppColors.primaryDark, size: 20),
+                                ),
+                                if (!isCompact) ...[
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      widget.gradeLevel,
+                                      style: const TextStyle(
+                                        fontFamily: AppTheme.fontFamily,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: AppColors.primaryDark,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView.separated(
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                              itemCount: _sidebarItems.length,
+                              separatorBuilder: (_, _) => const SizedBox(height: 4),
+                              itemBuilder: (context, index) {
+                                final item = _sidebarItems[index];
+                                final isSelected = _selectedSidebarIndex == index;
+
+                                final navButton = InkWell(
+                                  onTap: () => setState(() => _selectedSidebarIndex = index),
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 150),
+                                    padding: EdgeInsets.symmetric(horizontal: isCompact ? 8 : 14, vertical: 11),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? AppColors.sidebarActiveBackground
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: isCompact ? MainAxisAlignment.center : MainAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          item['icon'] as IconData,
+                                          size: 19,
+                                          color: isSelected
+                                              ? AppColors.sidebarActiveText
+                                              : AppColors.sidebarInactiveText,
+                                        ),
+                                        if (!isCompact) ...[
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              item['title'] as String,
+                                              style: TextStyle(
+                                                fontFamily: AppTheme.fontFamily,
+                                                fontSize: 13,
+                                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                                color: isSelected
+                                                    ? AppColors.sidebarActiveText
+                                                    : AppColors.sidebarInactiveText,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                );
+
+                                if (isCompact) {
+                                  return Tooltip(
+                                    message: item['title'] as String,
+                                    child: navButton,
+                                  );
+                                }
+                                return navButton;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Main View Content Container (eCoursie Rounded White Card)
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightSurface,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: const [AppColors.cardShadow],
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: _buildSelectedView(),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ],

@@ -31,6 +31,7 @@ class _GradeEntryViewState extends State<GradeEntryView> {
   String? _selectedClass = 'الكل';
   int _selectedMonth = 1; // 1, 2, or 3
   final Map<String, FocusNode> _focusNodes = {};
+  final ScrollController _hScrollController = ScrollController();
 
   @override
   void initState() {
@@ -86,6 +87,7 @@ class _GradeEntryViewState extends State<GradeEntryView> {
 
   @override
   void dispose() {
+    _hScrollController.dispose();
     _clearFocusNodes();
     super.dispose();
   }
@@ -102,17 +104,18 @@ class _GradeEntryViewState extends State<GradeEntryView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header & Selectors Bar
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
+          // Header & Selectors Bar (100% Responsive)
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 800;
+              final headerText = Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     "شاشة رصد الدرجات السريعة - ${widget.gradeLevel}",
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primaryDark,
                     ),
@@ -120,11 +123,13 @@ class _GradeEntryViewState extends State<GradeEntryView> {
                   const SizedBox(height: 4),
                   Text(
                     "الفصل الدراسي ${widget.selectedTerm == 1 ? 'الأول' : 'الثاني'} | التنقل بأسهم الكيبورد وعرض متوسط الترم الكلي (الـ 3 شهور معا).",
-                    style: const TextStyle(fontSize: 13, color: AppColors.secondaryDark),
+                    style: const TextStyle(fontSize: 13, color: AppColors.secondaryText),
                   ),
                 ],
-              ),
-              Row(
+              );
+
+              final buttonsGroup = Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   OutlinedButton.icon(
                     onPressed: (_selectedSubject == null || _selectedClass == null)
@@ -133,121 +138,164 @@ class _GradeEntryViewState extends State<GradeEntryView> {
                     icon: const Icon(Icons.download, size: 18),
                     label: const Text("تصدير كشف Excel"),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.secondaryAccent,
-                      side: const BorderSide(color: AppColors.secondaryAccent),
+                      foregroundColor: AppColors.primaryDark,
+                      side: const BorderSide(color: AppColors.primaryDark, width: 1.5),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  OutlinedButton.icon(
+                  const SizedBox(width: 10),
+                  ElevatedButton.icon(
                     onPressed: (_selectedSubject == null || _selectedClass == null)
                         ? null
                         : () => _importExcel(context, gradeProvider.assessmentItems),
                     icon: const Icon(Icons.upload_file, size: 18),
                     label: const Text("استيراد درجات Excel"),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primaryDark,
-                      side: const BorderSide(color: AppColors.primaryDark),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryDark,
+                      foregroundColor: Colors.white,
                     ),
                   ),
                 ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
+              );
 
-          // Filters Bar: Subject, Class, Month
+              if (isNarrow) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    headerText,
+                    const SizedBox(height: 12),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: buttonsGroup,
+                    ),
+                  ],
+                );
+              }
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(child: headerText),
+                  const SizedBox(width: 16),
+                  buttonsGroup,
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Filters Bar: Subject, Class, Month (Responsive Horizontal Scroll)
           Card(
             color: AppColors.lightSurface,
             elevation: 0,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             child: Padding(
               padding: const EdgeInsets.all(12.0),
-              child: Row(
-                children: [
-                  // Subject dropdown
-                  const Text('المادة: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(width: 6),
-                  AppDropdown<Subject>(
-                    value: _selectedSubject,
-                    items: subjectProvider.subjects
-                        .map((s) => DropdownMenuItem(value: s, child: Text(s.name)))
-                        .toList(),
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() => _selectedSubject = val);
-                        _refreshGrid();
-                      }
-                    },
-                  ),
-                  const SizedBox(width: 20),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    // Subject dropdown
+                    const Text('المادة: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 6),
+                    AppDropdown<Subject>(
+                      value: _selectedSubject,
+                      items: subjectProvider.subjects
+                          .map((s) => DropdownMenuItem(value: s, child: Text(s.name)))
+                          .toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          setState(() => _selectedSubject = val);
+                          _refreshGrid();
+                        }
+                      },
+                    ),
+                    const SizedBox(width: 20),
 
-                  // Class dropdown
-                  const Text('الفصل: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(width: 6),
-                  AppDropdown<String>(
-                    value: _selectedClass,
-                    items: [
-                      const DropdownMenuItem(value: 'الكل', child: Text('الكل (المرحلة كاملة)')),
-                      ...classProvider.classes.map((c) => DropdownMenuItem(value: c.className, child: Text('فصل ${c.className}'))),
-                    ],
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() => _selectedClass = val);
-                        _refreshGrid();
-                      }
-                    },
-                  ),
-                  const SizedBox(width: 20),
+                    // Class dropdown
+                    const Text('الفصل: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 6),
+                    AppDropdown<String>(
+                      value: _selectedClass,
+                      items: [
+                        const DropdownMenuItem(value: 'الكل', child: Text('الكل (المرحلة كاملة)')),
+                        ...classProvider.classes.map((c) => DropdownMenuItem(value: c.className, child: Text('فصل ${c.className}'))),
+                      ],
+                      onChanged: (val) {
+                        if (val != null) {
+                          setState(() => _selectedClass = val);
+                          _refreshGrid();
+                        }
+                      },
+                    ),
+                    const SizedBox(width: 20),
 
-                  // Month dropdown
-                  const Text('عرض / رصد الشهر: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(width: 6),
-                  AppDropdown<int>(
-                    value: _selectedMonth,
-                    items: const [
-                      DropdownMenuItem(value: 1, child: Text('شهر 1')),
-                      DropdownMenuItem(value: 2, child: Text('شهر 2')),
-                      DropdownMenuItem(value: 3, child: Text('شهر 3')),
-                      DropdownMenuItem(value: 4, child: Text('متوسط الترم (الـ 3 شهور معاً)')),
-                    ],
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() => _selectedMonth = val);
-                        _refreshGrid();
-                      }
-                    },
-                  ),
-                ],
+                    // Month dropdown
+                    const Text('عرض / رصد الشهر: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 6),
+                    AppDropdown<int>(
+                      value: _selectedMonth,
+                      items: const [
+                        DropdownMenuItem(value: 1, child: Text('شهر 1')),
+                        DropdownMenuItem(value: 2, child: Text('شهر 2')),
+                        DropdownMenuItem(value: 3, child: Text('شهر 3')),
+                        DropdownMenuItem(value: 4, child: Text('متوسط الترم (الـ 3 شهور معاً)')),
+                      ],
+                      onChanged: (val) {
+                        if (val != null) {
+                          setState(() => _selectedMonth = val);
+                          _refreshGrid();
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
           const SizedBox(height: 16),
 
-          // Main Grade Entry Table
+          // Main Grade Entry Table (Fits 100% strictly inside screen bounds)
           Expanded(
             child: Card(
               color: AppColors.lightSurface,
               elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide.none,
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: AppColors.mutedBorder, width: 1),
               ),
-              child: gradeProvider.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : gradeProvider.students.isEmpty
-                      ? const Center(
-                          child: Text(
-                            "لا يوجد طلاب مسجلون في هذا الفصل لرصد درجاتهم",
-                            style: TextStyle(color: AppColors.secondaryDark, fontSize: 15),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: gradeProvider.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : gradeProvider.students.isEmpty
+                        ? const Center(
+                            child: Text(
+                              "لا يوجد طلاب مسجلون في هذا الفصل لرصد درجاتهم",
+                              style: TextStyle(color: AppColors.secondaryText, fontSize: 15),
+                            ),
+                          )
+                        : LayoutBuilder(
+                            builder: (context, constraints) {
+                              return Scrollbar(
+                                controller: _hScrollController,
+                                thumbVisibility: true,
+                                trackVisibility: true,
+                                child: SingleChildScrollView(
+                                  controller: _hScrollController,
+                                  scrollDirection: Axis.horizontal,
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.vertical,
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                                      child: _buildGradeDataTable(context, gradeProvider),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        )
-                      : SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: _buildGradeDataTable(context, gradeProvider),
-                          ),
-                        ),
+              ),
             ),
           ),
         ],
@@ -271,6 +319,11 @@ class _GradeEntryViewState extends State<GradeEntryView> {
     if (subject.isPassFail) {
       // Pass/Fail subject data table
       return DataTable(
+        columnSpacing: 18.0,
+        horizontalMargin: 16.0,
+        headingRowHeight: 46.0,
+        dataRowMinHeight: 44.0,
+        dataRowMaxHeight: 52.0,
         headingRowColor: WidgetStateProperty.all(AppColors.neutralBackground),
         columns: const [
           DataColumn(label: Text('رقم الجلوس', style: TextStyle(fontWeight: FontWeight.bold))),
@@ -323,6 +376,11 @@ class _GradeEntryViewState extends State<GradeEntryView> {
     final bool isAvgMode = _selectedMonth == 4;
 
     return DataTable(
+      columnSpacing: 18.0,
+      horizontalMargin: 16.0,
+      headingRowHeight: 46.0,
+      dataRowMinHeight: 44.0,
+      dataRowMaxHeight: 52.0,
       headingRowColor: WidgetStateProperty.all(AppColors.neutralBackground),
       columns: [
         const DataColumn(label: Text('رقم الجلوس', style: TextStyle(fontWeight: FontWeight.bold))),
@@ -337,17 +395,9 @@ class _GradeEntryViewState extends State<GradeEntryView> {
             ),
           ),
         ),
-        DataColumn(
-          label: Text(
-            isAvgMode ? 'مجموع متوسطات البنود (المادة)' : 'مجموع درجات الشهر',
-            style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryDark),
-          ),
-        ),
       ],
       rows: List.generate(students.length, (rIndex) {
         final student = students[rIndex];
-        double currentMonthSum = 0.0;
-        double fullTermAvgSum = 0.0;
 
         final cells = <DataCell>[
           DataCell(Text(student.seatingNumber, style: const TextStyle(fontWeight: FontWeight.bold))),
@@ -364,10 +414,6 @@ class _GradeEntryViewState extends State<GradeEntryView> {
             final record = gradeProvider.getRecord(student.seatingNumber, itemId, widget.selectedTerm, subId);
             final isMonthExam = item.itemName.contains('اختبار');
             final itemAvg = record.calculateAverage(isMonthExam: isMonthExam);
-
-            if (itemAvg != null) {
-              fullTermAvgSum += itemAvg;
-            }
 
             cells.add(
               DataCell(
@@ -386,23 +432,6 @@ class _GradeEntryViewState extends State<GradeEntryView> {
               ),
             );
           }
-
-          // Total sum of item averages for this student
-          cells.add(
-            DataCell(
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryDark,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  fullTermAvgSum > 0 ? fullTermAvgSum.toStringAsFixed(2) : '-',
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              ),
-            ),
-          );
         } else {
           // Month score input fields (Months 1, 2, or 3)
           for (int cIndex = 0; cIndex < visibleItems.length; cIndex++) {
@@ -413,10 +442,6 @@ class _GradeEntryViewState extends State<GradeEntryView> {
             if (_selectedMonth == 1) currentScore = record.month1Score;
             if (_selectedMonth == 2) currentScore = record.month2Score;
             if (_selectedMonth == 3) currentScore = record.month3Score;
-
-            if (currentScore != null) {
-              currentMonthSum += currentScore;
-            }
 
             cells.add(
               DataCell(
@@ -465,26 +490,13 @@ class _GradeEntryViewState extends State<GradeEntryView> {
                       month1Score: m1,
                       month2Score: m2,
                       month3Score: m3,
+                      notify: false,
                     );
                   },
                 ),
               ),
             );
           }
-
-          // Total score sum for the selected month
-          cells.add(
-            DataCell(
-              Text(
-                currentMonthSum > 0 ? currentMonthSum.toStringAsFixed(2) : '-',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: AppColors.primaryDark,
-                ),
-              ),
-            ),
-          );
         }
 
         return DataRow(cells: cells);
@@ -493,6 +505,39 @@ class _GradeEntryViewState extends State<GradeEntryView> {
   }
 
   Future<void> _exportExcel(BuildContext context, List<Student> students, List<AssessmentItem> items) async {
+    bool exportWeekly = false;
+
+    if (_selectedMonth != 4) {
+      final choice = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.description_outlined, color: AppColors.primaryDark),
+              SizedBox(width: 8),
+              Text("اختر طريقة تصدير كشف Excel"),
+            ],
+          ),
+          content: const Text(
+            "هل ترغب في تصدير كشف شهري موحد (تبويب واحد) أم كشف تفصيلي يحتوي على 4 تبويبات للأربعة أسابيع الخاصة بالشهر؟",
+          ),
+          actions: [
+            OutlinedButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text("كشف شهري موحد (تبويب واحد)"),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text("كشف تفصيلي (4 تبويبات للأسابيع)"),
+            ),
+          ],
+        ),
+      );
+
+      if (choice == null) return;
+      exportWeekly = choice;
+    }
+
     final path = await ExcelGradeHelper.exportGradeSheet(
       subject: _selectedSubject!,
       gradeLevel: widget.gradeLevel,
@@ -501,6 +546,7 @@ class _GradeEntryViewState extends State<GradeEntryView> {
       month: _selectedMonth,
       students: students,
       assessmentItems: items,
+      exportWeeklyTabs: exportWeekly,
     );
 
     if (path != null && mounted) {

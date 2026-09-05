@@ -107,6 +107,7 @@ class GradeProvider extends ChangeNotifier {
     double? month2Score,
     double? month3Score,
     String? passFailStatus,
+    bool notify = true,
   }) async {
     final db = DatabaseHelper.instance.yearDb;
 
@@ -123,32 +124,29 @@ class GradeProvider extends ChangeNotifier {
       passFailStatus: passFailStatus ?? existingRecord.passFailStatus,
     );
 
-    // Synchronously update memory cache for instant UI response
+    // 1. Instantly update memory cache
     _gradeRecordsMap.putIfAbsent(seatingNumber, () => {})[assessmentItemId] = updatedRecord;
-    notifyListeners();
+    if (notify) notifyListeners();
 
-    // Query DB by unique composite key to get existing id if present
-    final existingMaps = await db.query(
-      'grade_records',
-      where: 'seating_number = ? AND subject_id = ? AND assessment_item_id = ? AND term = ?',
-      whereArgs: [seatingNumber, subjectId, assessmentItemId, term],
-    );
-
-    if (existingMaps.isNotEmpty) {
-      final existingId = existingMaps.first['id'] as int;
+    // 2. Direct fast database write without extra SELECT queries
+    if (existingRecord.id != null) {
+      final mapToUpdate = updatedRecord.toMap();
+      mapToUpdate.remove('id');
       await db.update(
         'grade_records',
-        updatedRecord.toMap(),
+        mapToUpdate,
         where: 'id = ?',
-        whereArgs: [existingId],
+        whereArgs: [existingRecord.id],
       );
     } else {
+      final mapToInsert = updatedRecord.toMap();
+      mapToInsert.remove('id');
       final insertedId = await db.insert(
         'grade_records',
-        updatedRecord.toMap(),
+        mapToInsert,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      _gradeRecordsMap.putIfAbsent(seatingNumber, () => {})[assessmentItemId] = GradeRecord(
+      final finalRecord = GradeRecord(
         id: insertedId,
         seatingNumber: seatingNumber,
         subjectId: subjectId,
@@ -159,35 +157,63 @@ class GradeProvider extends ChangeNotifier {
         month3Score: updatedRecord.month3Score,
         passFailStatus: updatedRecord.passFailStatus,
       );
+      _gradeRecordsMap.putIfAbsent(seatingNumber, () => {})[assessmentItemId] = finalRecord;
     }
   }
 
   /// Batch update grades from Excel import for target month
   Future<int> batchSaveGradeRecords(List<GradeRecord> records, {required int targetMonth}) async {
+    if (records.isEmpty) return 0;
     final db = DatabaseHelper.instance.yearDb;
     int count = 0;
 
+    final subjectId = records.first.subjectId;
+    final term = records.first.term;
+
+    // Fetch all existing records for subject/term in 1 single bulk query
+    final existingMaps = await db.query(
+      'grade_records',
+      where: 'subject_id = ? AND term = ?',
+      whereArgs: [subjectId, term],
+    );
+
+    final Map<String, GradeRecord> existingCache = {};
+    for (final m in existingMaps) {
+      final r = GradeRecord.fromMap(m);
+      existingCache['${r.seatingNumber}_${r.assessmentItemId}'] = r;
+    }
+
     await db.transaction((txn) async {
+      final batch = txn.batch();
       for (final rec in records) {
-        final existing = await txn.query(
-          'grade_records',
-          where: 'seating_number = ? AND subject_id = ? AND assessment_item_id = ? AND term = ?',
-          whereArgs: [rec.seatingNumber, rec.subjectId, rec.assessmentItemId, rec.term],
-        );
+        final key = '${rec.seatingNumber}_${rec.assessmentItemId}';
+        final existingRec = existingCache[key];
 
-        final mapToSave = rec.toMap();
-        mapToSave.remove('id');
-
-        if (existing.isNotEmpty) {
-          final id = existing.first['id'] as int;
-          final existingRec = GradeRecord.fromMap(existing.first);
-          
+        if (existingRec != null && existingRec.id != null) {
           double? m1 = targetMonth == 1 ? rec.month1Score : existingRec.month1Score;
           double? m2 = targetMonth == 2 ? rec.month2Score : existingRec.month2Score;
           double? m3 = targetMonth == 3 ? rec.month3Score : existingRec.month3Score;
 
-          final updatedRec = GradeRecord(
-            id: id,
+          final updateMap = {
+            'seating_number': rec.seatingNumber,
+            'subject_id': rec.subjectId,
+            'assessment_item_id': rec.assessmentItemId,
+            'term': rec.term,
+            'month_1_score': m1,
+            'month_2_score': m2,
+            'month_3_score': m3,
+            'pass_fail_status': rec.passFailStatus ?? existingRec.passFailStatus,
+          };
+
+          batch.update(
+            'grade_records',
+            updateMap,
+            where: 'id = ?',
+            whereArgs: [existingRec.id],
+          );
+
+          _gradeRecordsMap.putIfAbsent(rec.seatingNumber, () => {})[rec.assessmentItemId] = GradeRecord(
+            id: existingRec.id,
             seatingNumber: rec.seatingNumber,
             subjectId: rec.subjectId,
             assessmentItemId: rec.assessmentItemId,
@@ -195,39 +221,21 @@ class GradeProvider extends ChangeNotifier {
             month1Score: m1,
             month2Score: m2,
             month3Score: m3,
-            passFailStatus: rec.passFailStatus ?? existingRec.passFailStatus,
+            passFailStatus: updateMap['pass_fail_status'] as String?,
           );
-
-          final updateMap = updatedRec.toMap();
-          updateMap.remove('id');
-
-          await txn.update(
-            'grade_records',
-            updateMap,
-            where: 'id = ?',
-            whereArgs: [id],
-          );
-          _gradeRecordsMap.putIfAbsent(rec.seatingNumber, () => {})[rec.assessmentItemId] = updatedRec;
         } else {
-          final insertedId = await txn.insert(
+          final mapToInsert = rec.toMap();
+          mapToInsert.remove('id');
+          batch.insert(
             'grade_records',
-            mapToSave,
+            mapToInsert,
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
-          _gradeRecordsMap.putIfAbsent(rec.seatingNumber, () => {})[rec.assessmentItemId] = GradeRecord(
-            id: insertedId,
-            seatingNumber: rec.seatingNumber,
-            subjectId: rec.subjectId,
-            assessmentItemId: rec.assessmentItemId,
-            term: rec.term,
-            month1Score: rec.month1Score,
-            month2Score: rec.month2Score,
-            month3Score: rec.month3Score,
-            passFailStatus: rec.passFailStatus,
-          );
+          _gradeRecordsMap.putIfAbsent(rec.seatingNumber, () => {})[rec.assessmentItemId] = rec;
         }
         count++;
       }
+      await batch.commit(noResult: true);
     });
 
     notifyListeners();

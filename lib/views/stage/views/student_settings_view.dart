@@ -22,6 +22,14 @@ class _StudentSettingsViewState extends State<StudentSettingsView> {
   String _searchQuery = '';
   String _selectedClass = 'الكل';
   final Set<int> _selectedStudentIds = {};
+  final ScrollController _hScrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _hScrollController.dispose();
+    super.dispose();
+  }
 
   static const List<String> _allGradeLevels = [
     'الصف الأول الابتدائي',
@@ -64,12 +72,6 @@ class _StudentSettingsViewState extends State<StudentSettingsView> {
       return _allGradeLevels[idx + 1];
     }
     return currentGrade;
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 
   @override
@@ -261,87 +263,109 @@ class _StudentSettingsViewState extends State<StudentSettingsView> {
               color: AppColors.lightSurface,
               elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide.none,
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: AppColors.mutedBorder, width: 1),
               ),
-              child: studentProvider.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : filteredStudents.isEmpty
-                      ? const Center(
-                          child: Text(
-                            "لا يوجد طلاب مسجلون في هذا التصفية",
-                            style: TextStyle(color: AppColors.secondaryDark, fontSize: 15),
-                          ),
-                        )
-                      : SingleChildScrollView(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: DataTable(
-                              headingRowColor: WidgetStateProperty.all(AppColors.neutralBackground),
-                              showCheckboxColumn: true,
-                              onSelectAll: (val) {
-                                setState(() {
-                                  if (val == true) {
-                                    for (final s in filteredStudents) {
-                                      if (s.id != null) _selectedStudentIds.add(s.id!);
-                                    }
-                                  } else {
-                                    for (final s in filteredStudents) {
-                                      if (s.id != null) _selectedStudentIds.remove(s.id);
-                                    }
-                                  }
-                                });
-                              },
-                              columns: const [
-                                DataColumn(label: Text('رقم الجلوس', style: TextStyle(fontWeight: FontWeight.bold))),
-                                DataColumn(label: Text('اسم الطالب', style: TextStyle(fontWeight: FontWeight.bold))),
-                                DataColumn(label: Text('الفصل', style: TextStyle(fontWeight: FontWeight.bold))),
-                                DataColumn(label: Text('الجنس', style: TextStyle(fontWeight: FontWeight.bold))),
-                                DataColumn(label: Text('الإجراءات', style: TextStyle(fontWeight: FontWeight.bold))),
-                              ],
-                              rows: filteredStudents.map((student) {
-                                final isSelected = student.id != null && _selectedStudentIds.contains(student.id);
-
-                                return DataRow(
-                                  selected: isSelected,
-                                  onSelectChanged: (val) {
-                                    if (student.id == null) return;
-                                    setState(() {
-                                      if (val == true) {
-                                        _selectedStudentIds.add(student.id!);
-                                      } else {
-                                        _selectedStudentIds.remove(student.id);
-                                      }
-                                    });
-                                  },
-                                  cells: [
-                                    DataCell(Text(student.seatingNumber, style: const TextStyle(fontWeight: FontWeight.w600))),
-                                    DataCell(Text(student.name)),
-                                    DataCell(Text('فصل ${student.className}')),
-                                    DataCell(Text(student.gender)),
-                                    DataCell(
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.edit_outlined, color: AppColors.secondaryAccent, size: 20),
-                                            tooltip: 'تعديل',
-                                            onPressed: () => _showEditStudentDialog(context, student),
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
-                                            tooltip: 'حذف',
-                                            onPressed: () => _confirmDeleteStudent(context, student),
-                                          ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: studentProvider.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : filteredStudents.isEmpty
+                        ? const Center(
+                            child: Text(
+                              "لا يوجد طلاب مسجلون في هذا التصفية",
+                              style: TextStyle(color: AppColors.secondaryDark, fontSize: 15),
+                            ),
+                          )
+                        : LayoutBuilder(
+                            builder: (context, constraints) {
+                              return Scrollbar(
+                                controller: _hScrollController,
+                                thumbVisibility: true,
+                                trackVisibility: true,
+                                child: SingleChildScrollView(
+                                  controller: _hScrollController,
+                                  scrollDirection: Axis.horizontal,
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.vertical,
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                                      child: DataTable(
+                                        columnSpacing: 18.0,
+                                        horizontalMargin: 16.0,
+                                        headingRowHeight: 46.0,
+                                        dataRowMinHeight: 44.0,
+                                        dataRowMaxHeight: 52.0,
+                                        headingRowColor: WidgetStateProperty.all(AppColors.neutralBackground),
+                                        showCheckboxColumn: true,
+                                        onSelectAll: (val) {
+                                          setState(() {
+                                            if (val == true) {
+                                              for (final s in filteredStudents) {
+                                                if (s.id != null) _selectedStudentIds.add(s.id!);
+                                              }
+                                            } else {
+                                              for (final s in filteredStudents) {
+                                                if (s.id != null) _selectedStudentIds.remove(s.id);
+                                              }
+                                            }
+                                          });
+                                        },
+                                        columns: const [
+                                          DataColumn(label: Text('رقم الجلوس', style: TextStyle(fontWeight: FontWeight.bold))),
+                                          DataColumn(label: Text('اسم الطالب', style: TextStyle(fontWeight: FontWeight.bold))),
+                                          DataColumn(label: Text('الفصل', style: TextStyle(fontWeight: FontWeight.bold))),
+                                          DataColumn(label: Text('الجنس', style: TextStyle(fontWeight: FontWeight.bold))),
+                                          DataColumn(label: Text('الإجراءات', style: TextStyle(fontWeight: FontWeight.bold))),
                                         ],
+                                        rows: filteredStudents.map((student) {
+                                          final isSelected = student.id != null && _selectedStudentIds.contains(student.id);
+
+                                          return DataRow(
+                                            selected: isSelected,
+                                            onSelectChanged: (val) {
+                                              if (student.id == null) return;
+                                              setState(() {
+                                                if (val == true) {
+                                                  _selectedStudentIds.add(student.id!);
+                                                } else {
+                                                  _selectedStudentIds.remove(student.id);
+                                                }
+                                              });
+                                            },
+                                            cells: [
+                                              DataCell(Text(student.seatingNumber, style: const TextStyle(fontWeight: FontWeight.w600))),
+                                              DataCell(Text(student.name)),
+                                              DataCell(Text('فصل ${student.className}')),
+                                              DataCell(Text(student.gender)),
+                                              DataCell(
+                                                Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: const Icon(Icons.edit_outlined, color: AppColors.secondaryAccent, size: 20),
+                                                      tooltip: 'تعديل',
+                                                      onPressed: () => _showEditStudentDialog(context, student),
+                                                    ),
+                                                    IconButton(
+                                                      icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
+                                                      tooltip: 'حذف',
+                                                      onPressed: () => _confirmDeleteStudent(context, student),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }).toList(),
                                       ),
                                     ),
-                                  ],
-                                );
-                              }).toList(),
+                                  ),
+                                ),
+                              );
+                            },
                             ),
-                          ),
-                        ),
+              ),
             ),
           ),
         ],

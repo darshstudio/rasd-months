@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import '../core/database/database_helper.dart';
 import '../models/student.dart';
 
@@ -113,49 +114,45 @@ class StudentProvider extends ChangeNotifier {
     }
   }
 
-  /// Batch import students from Excel parser
+  /// Batch import students from Excel parser (Ultra-fast batch execution)
   Future<int> importStudentsBatch(List<Student> newStudents, String gradeLevel) async {
+    if (newStudents.isEmpty) return 0;
     int importedCount = 0;
     final db = DatabaseHelper.instance.yearDb;
 
     await db.transaction((txn) async {
+      final batch = txn.batch();
       for (final s in newStudents) {
-        final existing = await txn.query(
+        final map = s.toMap();
+        map.remove('id');
+        batch.insert(
           'students',
-          where: 'seating_number = ?',
-          whereArgs: [s.seatingNumber],
+          map,
+          conflictAlgorithm: ConflictAlgorithm.replace,
         );
-
-        if (existing.isNotEmpty) {
-          await txn.update(
-            'students',
-            s.toMap(),
-            where: 'seating_number = ?',
-            whereArgs: [s.seatingNumber],
-          );
-        } else {
-          await txn.insert('students', s.toMap());
-        }
         importedCount++;
       }
+      await batch.commit(noResult: true);
     });
 
     await loadStudentsForGrade(gradeLevel, gradeLevel, className: _selectedClassFilter);
     return importedCount;
   }
 
-  /// Batch update students stage and class name (e.g. transfer/move to next class)
+  /// Batch update students stage and class name (Ultra-fast batch)
   Future<bool> batchUpdateStudentsClass({
     required List<int> studentIds,
     required String targetStage,
     required String targetClassName,
     required String currentGradeLevel,
   }) async {
+    if (studentIds.isEmpty) return true;
     try {
       final db = DatabaseHelper.instance.yearDb;
       await db.transaction((txn) async {
+        final batch = txn.batch();
         for (final id in studentIds) {
-          await txn.update(
+          batch.update(
             'students',
             {
               'stage': targetStage,
@@ -165,6 +162,7 @@ class StudentProvider extends ChangeNotifier {
             whereArgs: [id],
           );
         }
+        await batch.commit(noResult: true);
       });
       await loadStudentsForGrade(currentGradeLevel, currentGradeLevel, className: _selectedClassFilter);
       return true;
@@ -175,23 +173,26 @@ class StudentProvider extends ChangeNotifier {
     }
   }
 
-  /// Batch update gender for selected students
+  /// Batch update gender for selected students (Ultra-fast batch)
   Future<bool> batchUpdateStudentsGender({
     required List<int> studentIds,
     required String gender,
     required String currentGradeLevel,
   }) async {
+    if (studentIds.isEmpty) return true;
     try {
       final db = DatabaseHelper.instance.yearDb;
       await db.transaction((txn) async {
+        final batch = txn.batch();
         for (final id in studentIds) {
-          await txn.update(
+          batch.update(
             'students',
             {'gender': gender},
             where: 'id = ?',
             whereArgs: [id],
           );
         }
+        await batch.commit(noResult: true);
       });
       await loadStudentsForGrade(currentGradeLevel, currentGradeLevel, className: _selectedClassFilter);
       return true;
@@ -202,21 +203,24 @@ class StudentProvider extends ChangeNotifier {
     }
   }
 
-  /// Batch delete selected students
+  /// Batch delete selected students (Ultra-fast batch)
   Future<bool> batchDeleteStudents({
     required List<int> studentIds,
     required String currentGradeLevel,
   }) async {
+    if (studentIds.isEmpty) return true;
     try {
       final db = DatabaseHelper.instance.yearDb;
       await db.transaction((txn) async {
+        final batch = txn.batch();
         for (final id in studentIds) {
-          await txn.delete(
+          batch.delete(
             'students',
             where: 'id = ?',
             whereArgs: [id],
           );
         }
+        await batch.commit(noResult: true);
       });
       await loadStudentsForGrade(currentGradeLevel, currentGradeLevel, className: _selectedClassFilter);
       return true;

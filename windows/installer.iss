@@ -1,7 +1,7 @@
 [Setup]
 AppId={{C6287A14-992F-4A47-A103-8B3914872BD3}
 AppName=رصد الشهري
-AppVersion=1.0.0
+AppVersion=1.0.1
 AppPublisher=Tadween
 AppPublisherURL=https://github.com/darshstudio/rasd-months
 DefaultDirName={autopf}\Tadween\RasdMonths

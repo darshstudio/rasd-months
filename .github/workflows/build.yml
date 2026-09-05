@@ -3,6 +3,7 @@ name: Rasd Months Desktop Builds
 on:
   push:
     branches: [ main, master ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
@@ -46,7 +47,7 @@ jobs:
           cp -r build/linux/x64/release/bundle/* build/deb/usr/lib/rasd-months/
           cat << 'EOF' > build/deb/DEBIAN/control
           Package: rasd-months
-          Version: 1.0.0
+          Version: 1.0.1
           Section: utils
           Priority: optional
           Architecture: amd64
@@ -64,26 +65,26 @@ jobs:
           Type=Application
           Categories=Education;
           EOF
-          dpkg-deb --build build/deb rasd-months_1.0.0_amd64.deb
+          dpkg-deb --build build/deb rasd-months_1.0.1_amd64.deb
 
       - name: Package .rpm Installer
         run: |
-          sudo alien -r --to-rpm --scripts rasd-months_1.0.0_amd64.deb
-          mv *.rpm rasd-months-1.0.0.x86_64.rpm || true
+          sudo alien -r --to-rpm --scripts rasd-months_1.0.1_amd64.deb
+          mv *.rpm rasd-months-1.0.1.x86_64.rpm || true
 
       - name: Publish Linux Packages to GitHub Release
         uses: softprops/action-gh-release@v2
         continue-on-error: true
         with:
-          tag_name: v1.0.0
-          name: "رصد الشهري - الإصدار 1.0.0"
-          body: "الحزم التنفيذية الرسمية لتطبيق رصد الشهري لنظامي Windows و Linux."
+          tag_name: v1.0.1
+          name: "رصد الشهري - الإصدار 1.0.1"
+          body: "الحزم التنفيذية الرسمية لتطبيق رصد الشهري لنظامي Windows و Linux (تتضمن حل مشكلة VCRUNTIME140_1.dll)."
           draft: false
           prerelease: false
           files: |
             rasd-months-linux-x64.tar.gz
-            rasd-months_1.0.0_amd64.deb
-            rasd-months-1.0.0.x86_64.rpm
+            rasd-months_1.0.1_amd64.deb
+            rasd-months-1.0.1.x86_64.rpm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -94,8 +95,8 @@ jobs:
           name: rasd-months-linux-packages
           path: |
             rasd-months-linux-x64.tar.gz
-            rasd-months_1.0.0_amd64.deb
-            rasd-months-1.0.0.x86_64.rpm
+            rasd-months_1.0.1_amd64.deb
+            rasd-months-1.0.1.x86_64.rpm
           retention-days: 1
 
   build-windows:
@@ -118,7 +119,7 @@ jobs:
       - name: Build Windows Desktop Release
         run: flutter build windows --release
 
-      - name: Prepare Staging & Build Inno Setup (.exe) Installer
+      - name: Prepare Staging, Bundle VC++ Runtime DLLs & Build Inno Setup (.exe) Installer
         shell: powershell
         run: |
           New-Item -ItemType Directory -Force -Path "windows\staging"
@@ -128,15 +129,24 @@ jobs:
           } elseif (Test-Path "build\windows\runner\Release") {
             Copy-Item -Path "build\windows\runner\Release\*" -Destination "windows\staging" -Recurse -Force
           }
+          # Bundle C++ Runtime DLLs directly into staging folder to fix missing VCRUNTIME140_1.dll error
+          $sysDir = "$env:SystemRoot\System32"
+          @("vcruntime140.dll", "vcruntime140_1.dll", "msvcp140.dll") | ForEach-Object {
+            $dllPath = Join-Path $sysDir $_
+            if (Test-Path $dllPath) {
+              Copy-Item -Path $dllPath -Destination "windows\staging" -Force
+              Write-Host "Bundled C++ Runtime DLL: $_ into staging"
+            }
+          }
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" windows\installer.iss
 
       - name: Publish Windows Installer to GitHub Release
         uses: softprops/action-gh-release@v2
         continue-on-error: true
         with:
-          tag_name: v1.0.0
-          name: "رصد الشهري - الإصدار 1.0.0"
-          body: "الحزم التنفيذية الرسمية لتطبيق رصد الشهري لنظامي Windows و Linux."
+          tag_name: v1.0.1
+          name: "رصد الشهري - الإصدار 1.0.1"
+          body: "الحزم التنفيذية الرسمية لتطبيق رصد الشهري لنظامي Windows و Linux (تتضمن حل مشكلة VCRUNTIME140_1.dll)."
           draft: false
           prerelease: false
           files: |
