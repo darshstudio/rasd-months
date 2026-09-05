@@ -194,6 +194,34 @@
         border-color: #CBD5E1 !important;
       }
 
+      /* OS Downloads Bar */
+      .rasd-page-wrapper .downloads-bar {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 12px !important;
+        flex-wrap: wrap !important;
+        margin-bottom: 3.5rem !important;
+      }
+
+      .rasd-page-wrapper .download-link-tag {
+        background-color: #FFFFFF !important;
+        border: 1px solid #CBD5E1 !important;
+        color: #334155 !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        font-size: 0.875rem !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .rasd-page-wrapper .download-link-tag:hover {
+        background-color: #F1F5F9 !important;
+        border-color: #0D5C46 !important;
+        color: #0D5C46 !important;
+      }
+
       /* Features Info Bar */
       .rasd-page-wrapper .quick-features-bar {
         display: flex !important;
@@ -489,6 +517,19 @@
             <line x1="8" y1="12" x2="16" y2="12"></line>
           </svg>
           تحميل لنظام لينكس (Linux .deb)
+        </a>
+      </div>
+
+      <!-- All Direct Download Options -->
+      <div class="downloads-bar">
+        <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months-1.0.0.x86_64.rpm" class="download-link-tag" target="_blank">
+          📦 Linux .rpm (Fedora / RedHat)
+        </a>
+        <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months-linux-x64.tar.gz" class="download-link-tag" target="_blank">
+          📦 Linux .tar.gz (أرشيف مضغوط)
+        </a>
+        <a href="https://github.com/darshstudio/rasd-months/releases/tag/v1.0.0" class="download-link-tag" target="_blank">
+          🌐 جميع نسخ الإصدار على GitHub
         </a>
       </div>
 

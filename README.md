@@ -3,7 +3,7 @@
 ![Flutter](https://img.shields.io/badge/Flutter-3.13+-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.1+-0175C2?style=for-the-badge&logo=dart&logoColor=white)
 ![Identifier](https://img.shields.io/badge/App%20ID-org.tadween.rasd--months-blue?style=for-the-badge)
-![Formats](https://img.shields.io/badge/Outputs-.exe%20%7C%20.deb%20%7C%20.rpm%20%7C%20AppImage%20%7C%20tar.gz-success?style=for-the-badge)
+![Formats](https://img.shields.io/badge/Outputs-.exe%20%7C%20.deb%20%7C%20.rpm%20%7C%20tar.gz-success?style=for-the-badge)
 
 **تطبيق رصد الشهري** (`org.tadween.rasd-months`) هو النظام المعياري المتكامل لإدارة ورصد وتجميع درجات الملف الشهري وبنود التقييم للمرحلتين الابتدائية والإعدادية بالمدارس الرسمية واللغات وخاصة المدارس المصرية اليابانية. صُمم التطبيق خصيصاً ليعمل بكفاءة عالية على أجهزة سطح المكتب (Linux & Windows) مع التزام كامل بالضوابط والتعليمات الوزارية المعمول بها دون أدنى تقريب أو جبر للكسور.
 
@@ -56,10 +56,8 @@
 | النظام | الصيغ المتوفرة | الوصف |
 | :--- | :--- | :--- |
 | **Windows** | `.exe` (Installer) | تثبيت قياسي كامل عبر Inno Setup (`rasd-months-setup.exe`) |
-| **Windows** | `.zip` (Portable) | نسخة محمولة جاهزة للتشغيل المباشر دون تثبيت |
 | **Linux** | `.deb` | حزمة تثبيت مخصصة لأنظمة Ubuntu / Debian |
 | **Linux** | `.rpm` | حزمة تثبيت مخصصة لأنظمة RedHat / Fedora / SUSE |
-| **Linux** | `AppImage` | حزمة محمولة تعمل على كافة توزيعات لينكس المحدثة |
 | **Linux** | `.tar.gz` | أرشفة مضغوطة للملف التنفيذي والمكتبات برمز النظام |
 
 ---
