@@ -1,0 +1,89 @@
+name: Rasd App Multi-Platform Desktop Builds
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    name: Build Linux Desktop Executable Bundle
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libsqlite3-dev
+
+      - name: Verify Flutter environment
+        run: flutter doctor -v
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run Static Analysis
+        run: flutter analyze
+
+      - name: Run Unit Tests
+        run: flutter test
+
+      - name: Build Linux Desktop Release Bundle
+        run: flutter build linux --release
+
+      - name: Compress Linux Build Artifact
+        run: |
+          cd build/linux/x64/release/bundle
+          tar -czvf ../../../../../rasd-linux-x64.tar.gz .
+
+      - name: Upload Linux Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rasd-linux-x64-bundle
+          path: rasd-linux-x64.tar.gz
+          retention-days: 30
+
+  build-windows:
+    name: Build Windows Desktop Executable Bundle
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter environment
+        run: flutter doctor -v
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Windows Desktop Release Bundle
+        run: flutter build windows --release
+
+      - name: Compress Windows Build Artifact
+        run: |
+          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath rasd-windows-x64.zip
+
+      - name: Upload Windows Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rasd-windows-x64-bundle
+          path: rasd-windows-x64.zip
+          retention-days: 30
