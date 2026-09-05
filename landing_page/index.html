@@ -8,20 +8,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>برنامج رصد الشهري - تطبيق رصد درجات الطلاب للمدارس الابتدائية والإعدادية</title>
-  <meta name="description" content="برنامج رصد الشهري هو البرنامج المعتمد لمساعدة المعلمين وإدارة المدارس في رصد التقييمات الشهرية وحساب المجاميع والمتوسطات بدقة فائقة وبدون حسابات يدوية.">
+  <meta name="description" content="تطبيق رصد الشهري هو النظام الأحدث والأسرع لمساعدة المعلمين وإدارة المدارس في رصد التقييمات الشهرية وحساب المجاميع والمتوسطات بدقة فائقة وبدون أي حسابات يدوية.">
 
-  <!-- Google Fonts Imports -->
+  <!-- Google Font: IBM Plex Sans Arabic ONLY -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <div class="rasd-page-wrapper">
     <style>
-      /* YouCan & CMS Isolation CSS Rules */
+      /* Reset & Global Scoping for YouCan & CMS Compatibility */
       .rasd-page-wrapper {
-        font-family: 'Cairo', 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif !important;
-        background-color: #F8FAFC !important;
-        background: #F8FAFC !important;
+        font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        background-color: #FAFAFC !important;
+        background: #FAFAFC !important;
         color: #0F172A !important;
         line-height: 1.6 !important;
         width: 100% !important;
@@ -33,12 +33,14 @@
         text-align: right !important;
         box-sizing: border-box !important;
         overflow-x: hidden !important;
+        -webkit-font-smoothing: antialiased !important;
       }
 
       .rasd-page-wrapper *,
       .rasd-page-wrapper *::before,
       .rasd-page-wrapper *::after {
         box-sizing: border-box !important;
+        font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
       }
 
       /* SVG Icon Rules for YouCan Platform */
@@ -48,568 +50,584 @@
         flex-shrink: 0 !important;
       }
 
-      /* Global Layout Container */
+      /* Container */
       .rasd-page-wrapper .container {
-        max-width: 1140px !important;
+        max-width: 1160px !important;
         margin: 0 auto !important;
         padding: 0 1.5rem !important;
         width: 100% !important;
       }
 
-      /* Header Navigation Bar */
+      /* Ultra-Clean Modern Header */
       .rasd-page-wrapper .site-header {
-        background-color: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-        border-bottom: 1px solid #E2E8F0 !important;
-        padding: 1.1rem 6% !important;
+        background-color: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+        padding: 1rem 6% !important;
         display: flex !important;
         justify-content: space-between !important;
         align-items: center !important;
         position: sticky !important;
         top: 0 !important;
         z-index: 9999 !important;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
         width: 100% !important;
       }
 
       .rasd-page-wrapper .brand-group {
         display: flex !important;
         align-items: center !important;
-        gap: 14px !important;
+        gap: 12px !important;
       }
 
-      .rasd-page-wrapper .brand-icon {
-        width: 46px !important;
-        height: 46px !important;
-        background: linear-gradient(135deg, #0D5C46 0%, #083E2F 100%) !important;
-        border-radius: 14px !important;
+      .rasd-page-wrapper .brand-logo {
+        width: 40px !important;
+        height: 40px !important;
+        background-color: #0D5C46 !important;
+        border-radius: 10px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         color: #FFFFFF !important;
-        box-shadow: 0 6px 16px rgba(13, 92, 70, 0.25) !important;
+        box-shadow: 0 4px 12px rgba(13, 92, 70, 0.2) !important;
       }
 
-      .rasd-page-wrapper .brand-info h1 {
-        font-size: 1.35rem !important;
-        font-weight: 800 !important;
+      .rasd-page-wrapper .brand-title-wrap h1 {
+        font-size: 1.25rem !important;
+        font-weight: 700 !important;
         color: #0F172A !important;
         line-height: 1.2 !important;
         margin: 0 !important;
         padding: 0 !important;
-        letter-spacing: -0.3px !important;
       }
 
-      .rasd-page-wrapper .brand-info span {
-        font-size: 0.825rem !important;
+      .rasd-page-wrapper .brand-title-wrap span {
+        font-size: 0.8rem !important;
         color: #64748B !important;
-        font-weight: 600 !important;
-      }
-
-      .rasd-page-wrapper .header-tag {
-        background-color: #ECFDF5 !important;
-        color: #0D5C46 !important;
-        border: 1px solid #A7F3D0 !important;
-        padding: 6px 16px !important;
-        border-radius: 20px !important;
-        font-size: 0.85rem !important;
-        font-weight: 700 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-      }
-
-      /* Hero Section */
-      .rasd-page-wrapper .hero-section {
-        position: relative !important;
-        padding: 4.5rem 1.5rem 3rem !important;
-        text-align: center !important;
-        background: radial-gradient(circle at 50% 0%, rgba(13, 92, 70, 0.06) 0%, transparent 65%) !important;
-      }
-
-      .rasd-page-wrapper .announcement-badge {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 10px !important;
-        background-color: #ECFDF5 !important;
-        color: #0D5C46 !important;
-        border: 1px solid #A7F3D0 !important;
-        padding: 8px 20px !important;
-        border-radius: 30px !important;
-        font-size: 0.925rem !important;
-        font-weight: 700 !important;
-        margin-bottom: 2rem !important;
-        box-shadow: 0 2px 10px rgba(13, 92, 70, 0.06) !important;
-      }
-
-      .rasd-page-wrapper .badge-dot {
-        width: 8px !important;
-        height: 8px !important;
-        background-color: #10B981 !important;
-        border-radius: 50% !important;
-        display: inline-block !important;
-      }
-
-      .rasd-page-wrapper .hero-title {
-        font-size: 3rem !important;
-        font-weight: 900 !important;
-        color: #0F172A !important;
-        line-height: 1.2 !important;
-        margin-bottom: 1.5rem !important;
-        letter-spacing: -0.8px !important;
-        max-width: 920px !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-      }
-
-      .rasd-page-wrapper .hero-subtitle {
-        font-size: 1.225rem !important;
-        color: #475569 !important;
-        max-width: 840px !important;
-        margin: 0 auto 2.75rem !important;
         font-weight: 500 !important;
-        line-height: 1.75 !important;
       }
 
-      /* Call To Action Buttons */
-      .rasd-page-wrapper .cta-group {
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        gap: 16px !important;
-        flex-wrap: wrap !important;
-        margin-bottom: 2.25rem !important;
-      }
-
-      .rasd-page-wrapper .btn {
-        padding: 16px 34px !important;
-        border-radius: 14px !important;
-        font-size: 1.05rem !important;
-        font-weight: 700 !important;
-        text-decoration: none !important;
-        transition: all 0.25s ease !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 10px !important;
-        cursor: pointer !important;
-      }
-
-      .rasd-page-wrapper .btn-main {
+      .rasd-page-wrapper .header-action-btn {
         background-color: #0D5C46 !important;
         color: #FFFFFF !important;
-        box-shadow: 0 6px 20px rgba(13, 92, 70, 0.3) !important;
-        border: 1px solid #0D5C46 !important;
-      }
-
-      .rasd-page-wrapper .btn-main:hover {
-        background-color: #083E2F !important;
-        border-color: #083E2F !important;
-        transform: translateY(-3px) !important;
-        box-shadow: 0 10px 28px rgba(13, 92, 70, 0.4) !important;
-      }
-
-      .rasd-page-wrapper .btn-secondary {
-        background-color: #FFFFFF !important;
-        color: #0F172A !important;
-        border: 1px solid #CBD5E1 !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-      }
-
-      .rasd-page-wrapper .btn-secondary:hover {
-        background-color: #F1F5F9 !important;
-        border-color: #94A3B8 !important;
-        transform: translateY(-3px) !important;
-      }
-
-      /* Downloads Bar Tags */
-      .rasd-page-wrapper .downloads-tags-bar {
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        gap: 10px !important;
-        flex-wrap: wrap !important;
-        margin-bottom: 2.75rem !important;
-      }
-
-      .rasd-page-wrapper .download-tag {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        color: #475569 !important;
-        padding: 8px 18px !important;
-        border-radius: 20px !important;
+        padding: 8px 20px !important;
+        border-radius: 8px !important;
         font-size: 0.875rem !important;
         font-weight: 600 !important;
         text-decoration: none !important;
         transition: all 0.2s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
       }
 
-      .rasd-page-wrapper .download-tag:hover {
-        background-color: #F8FAFC !important;
-        border-color: #0D5C46 !important;
+      .rasd-page-wrapper .header-action-btn:hover {
+        background-color: #083E2F !important;
+        transform: translateY(-1px) !important;
+      }
+
+      /* Hero Section with Ambient Glow */
+      .rasd-page-wrapper .hero-section {
+        position: relative !important;
+        padding: 5rem 1.5rem 3rem !important;
+        text-align: center !important;
+        background: radial-gradient(ellipse at 50% 0%, rgba(13, 92, 70, 0.08) 0%, rgba(250, 250, 252, 0) 70%) !important;
+      }
+
+      .rasd-page-wrapper .pill-badge {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        background-color: #ECFDF5 !important;
         color: #0D5C46 !important;
+        border: 1px solid #A7F3D0 !important;
+        padding: 6px 18px !important;
+        border-radius: 9999px !important;
+        font-size: 0.875rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 2rem !important;
       }
 
-      /* Quick Benefits Items */
-      .rasd-page-wrapper .trust-points-bar {
+      .rasd-page-wrapper .pill-dot {
+        width: 7px !important;
+        height: 7px !important;
+        background-color: #10B981 !important;
+        border-radius: 50% !important;
+      }
+
+      .rasd-page-wrapper .hero-heading {
+        font-size: 3.25rem !important;
+        font-weight: 700 !important;
+        color: #0F172A !important;
+        line-height: 1.25 !important;
+        margin-bottom: 1.5rem !important;
+        letter-spacing: -0.5px !important;
+        max-width: 900px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+      }
+
+      .rasd-page-wrapper .hero-subtext {
+        font-size: 1.2rem !important;
+        color: #475569 !important;
+        max-width: 780px !important;
+        margin: 0 auto 2.75rem !important;
+        font-weight: 400 !important;
+        line-height: 1.75 !important;
+      }
+
+      /* Buttons & CTAs */
+      .rasd-page-wrapper .hero-cta-group {
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
-        gap: 28px !important;
+        gap: 14px !important;
+        flex-wrap: wrap !important;
+        margin-bottom: 2rem !important;
+      }
+
+      .rasd-page-wrapper .btn-primary {
+        background-color: #0D5C46 !important;
+        color: #FFFFFF !important;
+        padding: 15px 32px !important;
+        border-radius: 12px !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        box-shadow: 0 4px 14px rgba(13, 92, 70, 0.3) !important;
+        border: 1px solid #0D5C46 !important;
+      }
+
+      .rasd-page-wrapper .btn-primary:hover {
+        background-color: #083E2F !important;
+        border-color: #083E2F !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(13, 92, 70, 0.4) !important;
+      }
+
+      .rasd-page-wrapper .btn-outline {
+        background-color: #FFFFFF !important;
+        color: #0F172A !important;
+        padding: 15px 30px !important;
+        border-radius: 12px !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        border: 1px solid #E2E8F0 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+      }
+
+      .rasd-page-wrapper .btn-outline:hover {
+        background-color: #F8FAFC !important;
+        border-color: #CBD5E1 !important;
+        transform: translateY(-2px) !important;
+      }
+
+      /* Format Badges Bar */
+      .rasd-page-wrapper .formats-bar {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 10px !important;
+        flex-wrap: wrap !important;
+        margin-bottom: 2.5rem !important;
+      }
+
+      .rasd-page-wrapper .format-pill {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        color: #475569 !important;
+        padding: 6px 14px !important;
+        border-radius: 20px !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .rasd-page-wrapper .format-pill:hover {
+        border-color: #0D5C46 !important;
+        color: #0D5C46 !important;
+        background-color: #F0FDF4 !important;
+      }
+
+      /* Key Trust Highlights */
+      .rasd-page-wrapper .trust-highlights {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 24px !important;
         flex-wrap: wrap !important;
         margin-bottom: 4rem !important;
         color: #475569 !important;
-        font-size: 0.95rem !important;
-        font-weight: 700 !important;
+        font-size: 0.925rem !important;
+        font-weight: 500 !important;
       }
 
       .rasd-page-wrapper .trust-item {
         display: flex !important;
         align-items: center !important;
-        gap: 8px !important;
+        gap: 6px !important;
       }
 
-      .rasd-page-wrapper .trust-icon {
+      .rasd-page-wrapper .trust-check {
         color: #0D5C46 !important;
-        font-weight: 900 !important;
+        font-weight: 700 !important;
       }
 
-      /* App Window Showcase Container (Hero Screen) */
-      .rasd-page-wrapper .hero-mockup-container {
-        max-width: 1080px !important;
-        margin: 0 auto 5.5rem !important;
-        padding: 0 1rem !important;
+      /* Hero App Frame Container with Halo Glow */
+      .rasd-page-wrapper .hero-mockup-wrapper {
+        max-width: 1060px !important;
+        margin: 0 auto 6rem !important;
         position: relative !important;
+        padding: 0 1rem !important;
       }
 
-      .rasd-page-wrapper .app-window-frame {
+      .rasd-page-wrapper .halo-glow {
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 80% !important;
+        height: 70% !important;
+        background: radial-gradient(circle, rgba(13, 92, 70, 0.12) 0%, rgba(250, 250, 252, 0) 75%) !important;
+        filter: blur(50px) !important;
+        z-index: 1 !important;
+        pointer-events: none !important;
+      }
+
+      .rasd-page-wrapper .desktop-window {
+        position: relative !important;
+        z-index: 2 !important;
         background-color: #FFFFFF !important;
-        border: 1px solid #CBD5E1 !important;
-        border-radius: 18px !important;
-        box-shadow: 0 25px 60px -15px rgba(13, 92, 70, 0.18), 0 12px 30px -10px rgba(0, 0, 0, 0.08) !important;
+        border: 1px solid rgba(226, 232, 240, 0.9) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.05), 0 20px 50px -10px rgba(13, 92, 70, 0.15), 0 10px 25px -15px rgba(0, 0, 0, 0.08) !important;
         overflow: hidden !important;
-        transition: transform 0.4s ease, box-shadow 0.4s ease !important;
-        width: 100% !important;
+        transition: transform 0.3s ease, box-shadow 0.3s ease !important;
       }
 
-      .rasd-page-wrapper .app-window-frame:hover {
-        transform: translateY(-4px) !important;
-        box-shadow: 0 32px 70px -12px rgba(13, 92, 70, 0.22), 0 16px 36px -8px rgba(0, 0, 0, 0.1) !important;
+      .rasd-page-wrapper .desktop-window:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 0 0 0 1px rgba(13, 92, 70, 0.2), 0 25px 60px -10px rgba(13, 92, 70, 0.18), 0 12px 30px -10px rgba(0, 0, 0, 0.1) !important;
       }
 
-      .rasd-page-wrapper .window-topbar {
-        background-color: #F1F5F9 !important;
+      .rasd-page-wrapper .window-titlebar {
+        background-color: #F8FAFC !important;
         border-bottom: 1px solid #E2E8F0 !important;
-        padding: 14px 22px !important;
+        padding: 12px 20px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
       }
 
-      .rasd-page-wrapper .window-controls {
+      .rasd-page-wrapper .window-dots-group {
         display: flex !important;
-        gap: 8px !important;
+        align-items: center !important;
+        gap: 7px !important;
       }
 
-      .rasd-page-wrapper .control-dot {
-        width: 12px !important;
-        height: 12px !important;
+      .rasd-page-wrapper .window-dot {
+        width: 11px !important;
+        height: 11px !important;
         border-radius: 50% !important;
         display: inline-block !important;
       }
-      .rasd-page-wrapper .dot-close { background-color: #EF4444 !important; }
-      .rasd-page-wrapper .dot-min { background-color: #F59E0B !important; }
-      .rasd-page-wrapper .dot-max { background-color: #10B981 !important; }
+      .rasd-page-wrapper .dot-red { background-color: #FF5F56 !important; }
+      .rasd-page-wrapper .dot-yellow { background-color: #FFBD2E !important; }
+      .rasd-page-wrapper .dot-green { background-color: #27C93F !important; }
 
-      .rasd-page-wrapper .window-caption {
-        font-size: 0.9rem !important;
+      .rasd-page-wrapper .window-title-text {
+        font-size: 0.85rem !important;
         color: #475569 !important;
-        font-weight: 700 !important;
+        font-weight: 500 !important;
         display: flex !important;
         align-items: center !important;
-        gap: 8px !important;
+        gap: 6px !important;
       }
 
-      .rasd-page-wrapper .app-screenshot-img {
+      .rasd-page-wrapper .window-img {
         width: 100% !important;
         height: auto !important;
         display: block !important;
-        border-bottom-left-radius: 17px !important;
-        border-bottom-right-radius: 17px !important;
+        border-bottom-left-radius: 15px !important;
+        border-bottom-right-radius: 15px !important;
       }
 
-      /* Section Common Header */
-      .rasd-page-wrapper .section-header {
+      /* Bento Features Grid */
+      .rasd-page-wrapper .section-header-block {
         text-align: center !important;
-        margin-bottom: 4rem !important;
+        margin-bottom: 3.5rem !important;
       }
 
-      .rasd-page-wrapper .section-header h3 {
+      .rasd-page-wrapper .section-header-block h3 {
         font-size: 2.25rem !important;
-        font-weight: 800 !important;
+        font-weight: 700 !important;
         color: #0F172A !important;
-        margin: 0 0 1rem 0 !important;
-        letter-spacing: -0.5px !important;
+        margin: 0 0 0.85rem 0 !important;
+        letter-spacing: -0.4px !important;
       }
 
-      .rasd-page-wrapper .section-header p {
-        color: #475569 !important;
-        font-size: 1.15rem !important;
-        max-width: 680px !important;
+      .rasd-page-wrapper .section-header-block p {
+        color: #64748B !important;
+        font-size: 1.1rem !important;
+        max-width: 640px !important;
         margin: 0 auto !important;
-        line-height: 1.65 !important;
+        font-weight: 400 !important;
       }
 
-      /* Features Grid Section */
-      .rasd-page-wrapper .features-section {
-        padding: 2rem 0 5.5rem !important;
-      }
-
-      .rasd-page-wrapper .features-grid {
+      .rasd-page-wrapper .bento-grid {
         display: grid !important;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
-        gap: 28px !important;
+        gap: 24px !important;
+        margin-bottom: 6rem !important;
       }
 
-      .rasd-page-wrapper .feature-card {
+      .rasd-page-wrapper .bento-card {
         background-color: #FFFFFF !important;
         border: 1px solid #E2E8F0 !important;
-        border-radius: 18px !important;
-        padding: 34px !important;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04) !important;
-        transition: all 0.3s ease !important;
+        border-radius: 16px !important;
+        padding: 30px !important;
+        transition: all 0.25s ease !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02) !important;
       }
 
-      .rasd-page-wrapper .feature-card:hover {
-        transform: translateY(-6px) !important;
-        box-shadow: 0 20px 40px -10px rgba(13, 92, 70, 0.12) !important;
+      .rasd-page-wrapper .bento-card:hover {
+        transform: translateY(-4px) !important;
         border-color: #CBD5E1 !important;
+        box-shadow: 0 12px 30px -8px rgba(13, 92, 70, 0.1) !important;
       }
 
-      .rasd-page-wrapper .feature-icon-box {
-        width: 54px !important;
-        height: 54px !important;
-        background-color: #ECFDF5 !important;
+      .rasd-page-wrapper .icon-container {
+        width: 48px !important;
+        height: 48px !important;
+        background-color: #F0FDF4 !important;
         color: #0D5C46 !important;
-        border-radius: 14px !important;
+        border-radius: 12px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        margin-bottom: 1.5rem !important;
-      }
-
-      .rasd-page-wrapper .feature-card h4 {
-        font-size: 1.25rem !important;
-        font-weight: 800 !important;
-        color: #0F172A !important;
-        margin: 0 0 0.85rem 0 !important;
-      }
-
-      .rasd-page-wrapper .feature-card p {
-        font-size: 0.975rem !important;
-        color: #475569 !important;
-        line-height: 1.7 !important;
-        margin: 0 !important;
-      }
-
-      /* Visual Showcases (Staggered Sections) */
-      .rasd-page-wrapper .showcase-section {
-        padding: 3rem 0 5.5rem !important;
-      }
-
-      .rasd-page-wrapper .showcase-block {
-        margin-bottom: 5.5rem !important;
-      }
-
-      .rasd-page-wrapper .showcase-card-lg {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        border-radius: 24px !important;
-        overflow: hidden !important;
-        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.05) !important;
-        display: grid !important;
-        grid-template-columns: 1fr !important;
-        gap: 0 !important;
-      }
-
-      .rasd-page-wrapper .showcase-text-content {
-        padding: 3.5rem 3rem 2.5rem !important;
-      }
-
-      .rasd-page-wrapper .showcase-tag {
-        color: #0D5C46 !important;
-        background-color: #ECFDF5 !important;
-        border: 1px solid #A7F3D0 !important;
-        font-size: 0.85rem !important;
-        font-weight: 800 !important;
-        padding: 4px 14px !important;
-        border-radius: 20px !important;
-        display: inline-block !important;
         margin-bottom: 1.25rem !important;
       }
 
-      .rasd-page-wrapper .showcase-text-content h4 {
-        font-size: 1.85rem !important;
-        font-weight: 800 !important;
+      .rasd-page-wrapper .bento-card h4 {
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
         color: #0F172A !important;
-        margin: 0 0 1rem 0 !important;
+        margin: 0 0 0.65rem 0 !important;
+      }
+
+      .rasd-page-wrapper .bento-card p {
+        font-size: 0.95rem !important;
+        color: #64748B !important;
+        line-height: 1.65 !important;
+        margin: 0 !important;
+      }
+
+      /* Visual Showcases */
+      .rasd-page-wrapper .showcase-item {
+        margin-bottom: 5.5rem !important;
+      }
+
+      .rasd-page-wrapper .showcase-box {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 20px !important;
+        overflow: hidden !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+      }
+
+      .rasd-page-wrapper .showcase-info-padding {
+        padding: 3rem 2.5rem 2rem !important;
+      }
+
+      .rasd-page-wrapper .showcase-category {
+        color: #0D5C46 !important;
+        background-color: #F0FDF4 !important;
+        border: 1px solid #DCFCE7 !important;
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        padding: 4px 12px !important;
+        border-radius: 20px !important;
+        display: inline-block !important;
+        margin-bottom: 1rem !important;
+      }
+
+      .rasd-page-wrapper .showcase-info-padding h4 {
+        font-size: 1.75rem !important;
+        font-weight: 700 !important;
+        color: #0F172A !important;
+        margin: 0 0 0.85rem 0 !important;
         line-height: 1.3 !important;
       }
 
-      .rasd-page-wrapper .showcase-text-content p {
-        font-size: 1.1rem !important;
+      .rasd-page-wrapper .showcase-info-padding p {
+        font-size: 1.05rem !important;
         color: #475569 !important;
-        line-height: 1.75 !important;
-        margin: 0 0 1.75rem 0 !important;
+        line-height: 1.7 !important;
+        margin: 0 0 1.5rem 0 !important;
       }
 
-      .rasd-page-wrapper .showcase-list {
+      .rasd-page-wrapper .bullet-points {
         list-style: none !important;
         padding: 0 !important;
         margin: 0 !important;
       }
 
-      .rasd-page-wrapper .showcase-list li {
+      .rasd-page-wrapper .bullet-points li {
         display: flex !important;
         align-items: center !important;
-        gap: 10px !important;
+        gap: 8px !important;
         color: #334155 !important;
-        font-size: 1rem !important;
-        font-weight: 700 !important;
-        margin-bottom: 0.85rem !important;
+        font-size: 0.95rem !important;
+        font-weight: 500 !important;
+        margin-bottom: 0.75rem !important;
       }
 
-      .rasd-page-wrapper .showcase-media-frame {
+      .rasd-page-wrapper .showcase-frame-wrap {
         background-color: #F8FAFC !important;
         border-top: 1px solid #E2E8F0 !important;
         padding: 1.5rem !important;
       }
 
-      /* Stats Highlight Banner */
-      .rasd-page-wrapper .stats-section {
+      /* Stats Counter Bar */
+      .rasd-page-wrapper .stats-card-banner {
         background: linear-gradient(135deg, #0D5C46 0%, #083E2F 100%) !important;
-        border-radius: 24px !important;
-        padding: 3.5rem 2rem !important;
+        border-radius: 20px !important;
+        padding: 3rem 2rem !important;
         color: #FFFFFF !important;
-        margin-bottom: 5.5rem !important;
-        box-shadow: 0 20px 45px -10px rgba(13, 92, 70, 0.35) !important;
+        margin-bottom: 6rem !important;
+        box-shadow: 0 16px 36px -8px rgba(13, 92, 70, 0.3) !important;
       }
 
-      .rasd-page-wrapper .stats-grid {
+      .rasd-page-wrapper .stats-flex {
         display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-        gap: 32px !important;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+        gap: 24px !important;
         text-align: center !important;
       }
 
-      .rasd-page-wrapper .stat-item h5 {
-        font-size: 2.75rem !important;
-        font-weight: 900 !important;
-        margin: 0 0 0.25rem 0 !important;
+      .rasd-page-wrapper .stat-box h5 {
+        font-size: 2.5rem !important;
+        font-weight: 700 !important;
+        margin: 0 0 0.2rem 0 !important;
         color: #FFFFFF !important;
         line-height: 1 !important;
       }
 
-      .rasd-page-wrapper .stat-item p {
-        font-size: 1.05rem !important;
+      .rasd-page-wrapper .stat-box p {
+        font-size: 0.95rem !important;
         color: #A7F3D0 !important;
         margin: 0 !important;
-        font-weight: 700 !important;
+        font-weight: 500 !important;
       }
 
-      /* Bottom CTA Banner */
-      .rasd-page-wrapper .bottom-cta-banner {
+      /* Bottom CTA Section */
+      .rasd-page-wrapper .bottom-cta-box {
         background-color: #FFFFFF !important;
         border: 1px solid #E2E8F0 !important;
-        border-radius: 24px !important;
-        padding: 4rem 2rem !important;
+        border-radius: 20px !important;
+        padding: 3.5rem 2rem !important;
         text-align: center !important;
-        margin-bottom: 5.5rem !important;
-        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.04) !important;
+        margin-bottom: 6rem !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
       }
 
-      .rasd-page-wrapper .bottom-cta-banner h3 {
-        font-size: 2.25rem !important;
-        font-weight: 900 !important;
+      .rasd-page-wrapper .bottom-cta-box h3 {
+        font-size: 2.1rem !important;
+        font-weight: 700 !important;
         color: #0F172A !important;
-        margin: 0 0 1rem 0 !important;
+        margin: 0 0 0.85rem 0 !important;
       }
 
-      .rasd-page-wrapper .bottom-cta-banner p {
-        font-size: 1.15rem !important;
-        color: #475569 !important;
-        max-width: 640px !important;
-        margin: 0 auto 2.25rem !important;
+      .rasd-page-wrapper .bottom-cta-box p {
+        font-size: 1.1rem !important;
+        color: #64748B !important;
+        max-width: 600px !important;
+        margin: 0 auto 2rem !important;
       }
 
-      /* Site Footer */
+      /* Footer */
       .rasd-page-wrapper .site-footer {
         background-color: #FFFFFF !important;
         border-top: 1px solid #E2E8F0 !important;
-        padding: 3rem 1.5rem !important;
+        padding: 2.5rem 1.5rem !important;
         text-align: center !important;
         color: #64748B !important;
-        font-size: 0.95rem !important;
-        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        font-weight: 500 !important;
         width: 100% !important;
       }
 
       @media (max-width: 768px) {
-        .rasd-page-wrapper .hero-title { font-size: 2.1rem !important; }
-        .rasd-page-wrapper .hero-subtitle { font-size: 1.05rem !important; }
-        .rasd-page-wrapper .showcase-text-content { padding: 2rem 1.5rem !important; }
-        .rasd-page-wrapper .showcase-text-content h4 { font-size: 1.45rem !important; }
-        .rasd-page-wrapper .site-header { padding: 1rem 4% !important; }
-        .rasd-page-wrapper .btn { width: 100% !important; justify-content: center !important; }
+        .rasd-page-wrapper .hero-heading { font-size: 2.1rem !important; }
+        .rasd-page-wrapper .hero-subtext { font-size: 1.05rem !important; }
+        .rasd-page-wrapper .showcase-info-padding { padding: 1.75rem 1.25rem !important; }
+        .rasd-page-wrapper .showcase-info-padding h4 { font-size: 1.4rem !important; }
+        .rasd-page-wrapper .site-header { padding: 0.85rem 4% !important; }
+        .rasd-page-wrapper .btn-primary, .rasd-page-wrapper .btn-outline { width: 100% !important; justify-content: center !important; }
       }
     </style>
 
-    <!-- Header Section -->
+    <!-- Header Navigation -->
     <header class="site-header">
       <div class="brand-group">
-        <div class="brand-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <div class="brand-logo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
             <polyline points="14 2 14 8 20 8"></polyline>
             <line x1="16" y1="13" x2="8" y2="13"></line>
             <line x1="16" y1="17" x2="8" y2="17"></line>
           </svg>
         </div>
-        <div class="brand-info">
+        <div class="brand-title-wrap">
           <h1>تطبيق رصد الشهري</h1>
           <span>للمدارس الابتدائية والإعدادية</span>
         </div>
       </div>
-      <div class="header-tag">
-        <span class="badge-dot"></span>
-        الإصدار v1.0.0 المعتمد
-      </div>
+      <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months-setup.exe" class="header-action-btn" target="_blank">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        تحميل البرنامج
+      </a>
     </header>
 
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="container">
-        <div class="announcement-badge">
-          🎓 التطبيق المعتمد لرصد تقييمات الملف الشهري وبنود التقييم
+        <div class="pill-badge">
+          <span class="pill-dot"></span>
+          الإصدار المعتمد v1.0.0 لجميع أنظمة سطح المكتب
         </div>
 
-        <h2 class="hero-title">البرنامج الأسهل والأسرع لرصد درجات التقييمات الشهرية</h2>
-        <p class="hero-subtitle">
-          صُمم خصيصاً لمساعدة المعلمين وإدارة الكنترول في إدخال وحساب درجات الملف الشهري بدقة متناهية، وإصدار الإشعارات وكشوف الرصد المجمعة فوراً ودون أي حسابات يدوية.
+        <h2 class="hero-heading">تطبيق رصد درجات تقييمات الملف الشهري بكل سهولة ودقة</h2>
+        <p class="hero-subtext">
+          النظام المعتمد المصمم خصيصاً لمساعدة المعلمين وإدارة المدارس في إدخال وحساب درجات التقييمات الشهرية فوراً وبدون أي أخطاء حسابية يدوية.
         </p>
 
-        <!-- CTA Buttons -->
-        <div class="cta-group">
-          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months-setup.exe" class="btn btn-main" target="_blank">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Main CTAs -->
+        <div class="hero-cta-group">
+          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months-setup.exe" class="btn-primary" target="_blank">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
             تحميل لنظام ويندوز (Windows .exe)
           </a>
-          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months_1.0.0_amd64.deb" class="btn btn-secondary" target="_blank">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months_1.0.0_amd64.deb" class="btn-outline" target="_blank">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="4" y="4" width="16" height="16" rx="2"></rect>
               <line x1="12" y1="8" x2="12" y2="16"></line>
               <line x1="8" y1="12" x2="16" y2="12"></line>
@@ -618,275 +636,273 @@
           </a>
         </div>
 
-        <!-- All Direct Download Options -->
-        <div class="downloads-tags-bar">
-          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months-1.0.0.x86_64.rpm" class="download-tag" target="_blank">
+        <!-- Format Options -->
+        <div class="formats-bar">
+          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months-1.0.0.x86_64.rpm" class="format-pill" target="_blank">
             📦 Linux .rpm (Fedora / RedHat)
           </a>
-          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months-linux-x64.tar.gz" class="download-tag" target="_blank">
+          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months-linux-x64.tar.gz" class="format-pill" target="_blank">
             📦 Linux .tar.gz (أرشيف مضغوط)
           </a>
-          <a href="https://github.com/darshstudio/rasd-months/releases/tag/v1.0.0" class="download-tag" target="_blank">
+          <a href="https://github.com/darshstudio/rasd-months/releases/tag/v1.0.0" class="format-pill" target="_blank">
             🌐 جميع النسخ والإصدارات على GitHub
           </a>
         </div>
 
-        <!-- Trust Features Bar -->
-        <div class="trust-points-bar">
+        <!-- Trust Features -->
+        <div class="trust-highlights">
           <div class="trust-item">
-            <span class="trust-icon">✓</span> يعمل بدون إنترنت 100% (سرعة وأمان تام)
+            <span class="trust-check">✓</span> يعمل بدون إنترنت 100% (أمان وحماية تامة للبيانات)
           </div>
           <div class="trust-item">
-            <span class="trust-icon">✓</span> احتساب تلقائي ودقيق دون جبر الكسر
+            <span class="trust-check">✓</span> احتساب دقيق دون جبر الكسر
           </div>
           <div class="trust-item">
-            <span class="trust-icon">✓</span> دعم كامل لاستيراد وتصدير ملفات Excel
+            <span class="trust-check">✓</span> استيراد وتصدير سريع مع ملفات Excel
           </div>
         </div>
 
-        <!-- Main Hero Screenshot Frame -->
-        <div class="hero-mockup-container">
-          <div class="app-window-frame">
-            <div class="window-topbar">
-              <div class="window-controls">
-                <span class="control-dot dot-close"></span>
-                <span class="control-dot dot-min"></span>
-                <span class="control-dot dot-max"></span>
+        <!-- Hero Desktop Window Mockup with Ambient Halo -->
+        <div class="hero-mockup-wrapper">
+          <div class="halo-glow"></div>
+          <div class="desktop-window">
+            <div class="window-titlebar">
+              <div class="window-dots-group">
+                <span class="window-dot dot-red"></span>
+                <span class="window-dot dot-yellow"></span>
+                <span class="window-dot dot-green"></span>
               </div>
-              <div class="window-caption">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <div class="window-title-text">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="3" width="18" height="18" rx="2"></rect>
                   <path d="M3 9h18M9 21V9"></path>
                 </svg>
-                تطبيق رصد درجات الملف - تحديد العام الدراسي الحالي
+                تطبيق رصد الشهري - واجهة تحديد العام الدراسي
               </div>
               <div></div>
             </div>
             <img 
               src="https://raw.githubusercontent.com/darshstudio/rasd-months/main/landing_page/images/hero_screenshot.png" 
-              alt="واجهة اختيار العام الدراسي تطبيق رصد الشهري" 
-              class="app-screenshot-img"
+              alt="واجهة برنامج رصد الشهري" 
+              class="window-img"
               onerror="this.onerror=null; this.src='https://lh3.googleusercontent.com/d/1efZiVXHjZJ_uz5yMD51ISKXq-ErQCNgO';"
             />
           </div>
         </div>
+
       </div>
     </section>
 
-    <!-- Features Section Grid -->
-    <section class="features-section">
-      <div class="container">
-        <div class="section-header">
-          <h3>كل ما يحتاجه المعلم والكنترول في مكان واحد</h3>
-          <p>مميزات متقدمة صُممت لتوفر ساعات من العمل اليدوي وتمنع أخطاء التجميع الحسابية</p>
+    <!-- Bento Features Section -->
+    <section class="container">
+      <div class="section-header-block">
+        <h3>مميزات صُممت لتبسيط أعمال الكنترول والرصد</h3>
+        <p>أدوات عمليّة وسريعة توفر ساعات طويلة من العمل اليدوي وتضمن الدقة الكاملة في النتائج</p>
+      </div>
+
+      <div class="bento-grid">
+        <div class="bento-card">
+          <div class="icon-container">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+              <path d="M3 9h18M9 21V9"></path>
+            </svg>
+          </div>
+          <h4>جدول رصد سريـع وتفاعلي</h4>
+          <p>إدخال سلس للدرجات مع إمكانية التنقل التام بواسطة أسهم لوحة المفاتيح والإنتر بحفظ تلقائي فوري.</p>
         </div>
 
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon-box">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-                <path d="M3 9h18M9 21V9"></path>
-              </svg>
-            </div>
-            <h4>إدخال درجات سريع وتفاعلي</h4>
-            <p>جدول ذكي يدعم التنقل السريع بأسهم الكيبورد (↑, ↓, ←, →, Enter, Tab) مع الحفظ التلقائي الفوري دون الخوف من ضياع البيانات.</p>
+        <div class="bento-card">
+          <div class="icon-container">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
           </div>
+          <h4>حساب دقيق لمجاميع الشهور ومتوسط الترم</h4>
+          <p>تجميع فوري لدرجات كل شهر وتوليد متوسط الـ 3 شهور كـ تبويب مستقل بدقة كاملة بدون جبر الكسر.</p>
+        </div>
 
-          <div class="feature-card">
-            <div class="feature-icon-box">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-              </svg>
-            </div>
-            <h4>حساب دقيق للمجموع ومتوسط الترم</h4>
-            <p>حساب مجموع كل شهر على حدة وتجميع متوسط الـ 3 شهور تلقائياً بدقة متناهية وتحديد الدرجات المستحقة بدقة دون جبر الكسر.</p>
+        <div class="bento-card">
+          <div class="icon-container">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
           </div>
+          <h4>إشعارات التقييم الشهري (PDF)</h4>
+          <p>إصدار وطباعة إشعار درجات رسمي لكل طالب مع توقيع معلم المادة واعتماد مدير المدرسة.</p>
+        </div>
 
-          <div class="feature-card">
-            <div class="feature-icon-box">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-              </svg>
-            </div>
-            <h4>طباعة إشعارات تقييم الطلاب</h4>
-            <p>إصدار وطباعة إشعار التقييم لكل طالب بضغطة زر، مع تخصيص اسم المدرسة وتوقيع المعلم ومدير المدرسة المعتمد.</p>
+        <div class="bento-card">
+          <div class="icon-container">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
           </div>
+          <h4>ربط فوري مع شيتات Excel</h4>
+          <p>تصدير كشوف الدرجات بنطاق محدد واستيراد الشيتات المعيارية مع معاينة تفاعلية مسبقة.</p>
+        </div>
 
-          <div class="feature-card">
-            <div class="feature-icon-box">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-            </div>
-            <h4>ربط مباشر مع ملفات Excel</h4>
-            <p>تصدير كشوف الدرجات بنطاق شامل، واستيراد تفاعلي مع معاينة مسبقة لتسجيل وتحديث درجات شيتات الإكسيل بسهولة.</p>
+        <div class="bento-card">
+          <div class="icon-container">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
           </div>
+          <h4>كشوف رصد مجمعة لجميع المواد</h4>
+          <p>كشف رصد مجمع لكافة المواد الدراسية للمرحلة أو الفصل بنمط أفقي مخصص للطباعة والمراجعة.</p>
+        </div>
 
-          <div class="feature-card">
-            <div class="feature-icon-box">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-              </svg>
-            </div>
-            <h4>كشوف رصد مجمعة للمواد</h4>
-            <p>عرض أفقي شامل يوضح درجات كافة المواد الدراسية للمرحلة كاملة أو لفصل محدد في كشف واحد موحد.</p>
+        <div class="bento-card">
+          <div class="icon-container">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
           </div>
-
-          <div class="feature-card">
-            <div class="feature-icon-box">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0D5C46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              </svg>
-            </div>
-            <h4>دعم المدارس الرسمية واللغات</h4>
-            <p>تطبيق شامل يدعم الصفوف الابتدائية والإعدادية بمواد التوكاتسو، التربية البدنية، واللغة الإنجليزية الإضافية لمدارس اللغات.</p>
-          </div>
+          <h4>دعم المدارس الرسمية واللغات</h4>
+          <p>دعم شامل لمواد التوكاتسو والتربية البدنية واللغة الإنجليزية الإضافية لمدارس اللغات.</p>
         </div>
       </div>
     </section>
 
-    <!-- Visual Showcase Section (Sub Screenshots) -->
-    <section class="showcase-section">
-      <div class="container">
-        
-        <!-- Showcase Block 1 -->
-        <div class="showcase-block">
-          <div class="showcase-card-lg">
-            <div class="showcase-text-content">
-              <span class="showcase-tag">تنظيم الصفوف والمراحل</span>
-              <h4>اختيار مرن للمراحل التعليمية والفصول الدراسية</h4>
-              <p>
-                يتيح البرنامج واجهة مبسطة تُمكّنك من التبديل السلس بين الفصل الدراسي الأول والثاني، واختيار الصفوف الابتدائية (من الأول إلى السادس) أو الحلقة الإعدادية بضغطة زر واحدة.
-              </p>
-              <ul class="showcase-list">
-                <li>
-                  <span style="color: #0D5C46;">✓</span> التبديل الفوري بين الترم الأول والترم الثاني
-                </li>
-                <li>
-                  <span style="color: #0D5C46;">✓</span> دعم كافة الصفوف الابتدائية والإعدادية
-                </li>
-                <li>
-                  <span style="color: #0D5C46;">✓</span> سهولة تغيير واستبدال العام الدراسي الحالي
-                </li>
-              </ul>
-            </div>
-            <div class="showcase-media-frame">
-              <div class="app-window-frame">
-                <div class="window-topbar">
-                  <div class="window-controls">
-                    <span class="control-dot dot-close"></span>
-                    <span class="control-dot dot-min"></span>
-                    <span class="control-dot dot-max"></span>
-                  </div>
-                  <div class="window-caption">شاشة اختيار الصف الدراسي والترم - برنامج رصد</div>
-                  <div></div>
+    <!-- Staggered Showcase Items -->
+    <section class="container">
+      
+      <!-- Showcase Item 1 -->
+      <div class="showcase-item">
+        <div class="showcase-box">
+          <div class="showcase-info-padding">
+            <span class="showcase-category">اختيار الصفوف والمراحل</span>
+            <h4>تنظيم مرن لصفوف وفصول المرحلة الابتدائية والإعدادية</h4>
+            <p>
+              تنقل واختيار سلس بين الصفوف من الأول إلى السادس الابتدائي أو المرحلة الإعدادية، مع إمكانية التبديل السريع بين الفصل الدراسي الأول والفصل الدراسي الثاني بضغطة زر.
+            </p>
+            <ul class="bullet-points">
+              <li>
+                <span style="color: #0D5C46; font-weight: 700;">✓</span> تبديل فوري بين الفصل الدراسي الأول والثاني
+              </li>
+              <li>
+                <span style="color: #0D5C46; font-weight: 700;">✓</span> دعم كافة الصفوف الابتدائية والإعدادية
+              </li>
+              <li>
+                <span style="color: #0D5C46; font-weight: 700;">✓</span> مرونة تغيير واستبدال العام الدراسي
+              </li>
+            </ul>
+          </div>
+          <div class="showcase-frame-wrap">
+            <div class="desktop-window">
+              <div class="window-titlebar">
+                <div class="window-dots-group">
+                  <span class="window-dot dot-red"></span>
+                  <span class="window-dot dot-yellow"></span>
+                  <span class="window-dot dot-green"></span>
                 </div>
-                <img 
-                  src="https://raw.githubusercontent.com/darshstudio/rasd-months/main/landing_page/images/sub_screenshot1.png" 
-                  alt="شاشة اختيار الصف والترم الدراسي" 
-                  class="app-screenshot-img"
-                  onerror="this.onerror=null; this.src='https://lh3.googleusercontent.com/d/1U0jBKfOrFi0BJGyh_fagP257VHlKKpF_';"
-                />
+                <div class="window-title-text">شاشة اختيار الصف والترم الدراسي - برنامج رصد</div>
+                <div></div>
               </div>
+              <img 
+                src="https://raw.githubusercontent.com/darshstudio/rasd-months/main/landing_page/images/sub_screenshot1.png" 
+                alt="شاشة اختيار الصف والترم الدراسي" 
+                class="window-img"
+                onerror="this.onerror=null; this.src='https://lh3.googleusercontent.com/d/1U0jBKfOrFi0BJGyh_fagP257VHlKKpF_';"
+              />
             </div>
           </div>
         </div>
-
-        <!-- Showcase Block 2 -->
-        <div class="showcase-block">
-          <div class="showcase-card-lg">
-            <div class="showcase-text-content">
-              <span class="showcase-tag">لوحة تحكم الكنترول</span>
-              <h4>إدارة شاملة لفصول المدرسة، المواد، وقوائم الطلاب</h4>
-              <p>
-                قائمة جانبية متكاملة تمنح الكنترول المعلمي صلاحية إضافة وتعديل الفصول (مثل 2A, 2B)، ضبط المواد المقررة، استيراد بيانات الطلاب، والوصول المباشر لشاشات الرصد والشهادات والتقارير.
-              </p>
-              <ul class="showcase-list">
-                <li>
-                  <span style="color: #0D5C46;">✓</span> إضافة وتعديل الفصول المدرسية بحرية كاملة
-                </li>
-                <li>
-                  <span style="color: #0D5C46;">✓</span> الوصول السريع لإعدادات المواد وشاشات الرصد
-                </li>
-                <li>
-                  <span style="color: #0D5C46;">✓</span> طباعة الشهادات والتقارير المعتمدة بسهولة
-                </li>
-              </ul>
-            </div>
-            <div class="showcase-media-frame">
-              <div class="app-window-frame">
-                <div class="window-topbar">
-                  <div class="window-controls">
-                    <span class="control-dot dot-close"></span>
-                    <span class="control-dot dot-min"></span>
-                    <span class="control-dot dot-max"></span>
-                  </div>
-                  <div class="window-caption">لوحة إعدادات الفصول والكنترول - برنامج رصد</div>
-                  <div></div>
-                </div>
-                <img 
-                  src="https://raw.githubusercontent.com/darshstudio/rasd-months/main/landing_page/images/sub_screenshot2.png" 
-                  alt="لوحة إدارة إعدادات الفصول والكنترول" 
-                  class="app-screenshot-img"
-                  onerror="this.onerror=null; this.src='https://lh3.googleusercontent.com/d/1Lpomrr-1g5cMEtUuMtf9c1nmegRqH8Yo';"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
+
+      <!-- Showcase Item 2 -->
+      <div class="showcase-item">
+        <div class="showcase-box">
+          <div class="showcase-info-padding">
+            <span class="showcase-category">إدارة الفصول والكنترول</span>
+            <h4>لوحة تحكم جانبية لإعداد الفصول والمواد والشهادات</h4>
+            <p>
+              لوحة تحكم منظمة تتيح للكنترول إضافة وتعديل الفصول المدرسية، ضبط قائمة المواد الأساسية والفرعية، وإدارة الطلاب وتوليد الشهادات والتقارير المعتمدة بسهولة.
+            </p>
+            <ul class="bullet-points">
+              <li>
+                <span style="color: #0D5C46; font-weight: 700;">✓</span> إضافة وتعديل الفصول والمجموعات بالكنترول
+              </li>
+              <li>
+                <span style="color: #0D5C46; font-weight: 700;">✓</span> وصول فوري لشاشات إدخال الدرجات وإعداد المواد
+              </li>
+              <li>
+                <span style="color: #0D5C46; font-weight: 700;">✓</span> طباعة الشهادات والتقارير في أي وقت
+              </li>
+            </ul>
+          </div>
+          <div class="showcase-frame-wrap">
+            <div class="desktop-window">
+              <div class="window-titlebar">
+                <div class="window-dots-group">
+                  <span class="window-dot dot-red"></span>
+                  <span class="window-dot dot-yellow"></span>
+                  <span class="window-dot dot-green"></span>
+                </div>
+                <div class="window-title-text">لوحة إعدادات الفصول والكنترول - برنامج رصد</div>
+                <div></div>
+              </div>
+              <img 
+                src="https://raw.githubusercontent.com/darshstudio/rasd-months/main/landing_page/images/sub_screenshot2.png" 
+                alt="لوحة إعدادات الفصول والكنترول" 
+                class="window-img"
+                onerror="this.onerror=null; this.src='https://lh3.googleusercontent.com/d/1Lpomrr-1g5cMEtUuMtf9c1nmegRqH8Yo';"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <!-- Stats Banner -->
     <div class="container">
-      <section class="stats-section">
-        <div class="stats-grid">
-          <div class="stat-item">
+      <div class="stats-card-banner">
+        <div class="stats-flex">
+          <div class="stat-box">
             <h5>100%</h5>
             <p>دقة التجميع والحساب التلقائي</p>
           </div>
-          <div class="stat-item">
+          <div class="stat-box">
             <h5>0</h5>
-            <p>أخطاء في حساب متوسطات الشهور</p>
+            <p>أخطاء في حساب متوسطات التقييم</p>
           </div>
-          <div class="stat-item">
+          <div class="stat-box">
             <h5>100%</h5>
             <p>عمل كامل بدون إنترنت (أوفلاين)</p>
           </div>
-          <div class="stat-item">
+          <div class="stat-box">
             <h5>v1.0.0</h5>
-            <p>نسخة معتمدة ومجانية بالكامل</p>
+            <p>نسخة رسمية مجانية بالكامل</p>
           </div>
         </div>
-      </section>
+      </div>
     </div>
 
-    <!-- Bottom CTA Banner -->
+    <!-- Bottom CTA Card -->
     <div class="container">
-      <section class="bottom-cta-banner">
-        <h3>ابدأ رصد درجات طلابك بسهولة ودقة اليوم</h3>
-        <p>قم بتحميل برنامج رصد الشهري مجاناً واستمتع بتجربة إدخال ورصد سلسة توفر وقتك وتضمن دقة نتائج الكنترول.</p>
+      <div class="bottom-cta-box">
+        <h3>ابدأ رصد درجات تقييمات الطلاب بسهولة اليوم</h3>
+        <p>حمل تطبيق رصد الشهري الآن واستمتع بتجربة رصد سريعة توفر وقتك وتضمن دقة نتائج الكنترول.</p>
 
-        <div class="cta-group">
-          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months-setup.exe" class="btn btn-main" target="_blank">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="hero-cta-group">
+          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months-setup.exe" class="btn-primary" target="_blank">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
             تحميل للويندوز (Windows .exe)
           </a>
-          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months_1.0.0_amd64.deb" class="btn btn-secondary" target="_blank">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <a href="https://github.com/darshstudio/rasd-months/releases/download/v1.0.0/rasd-months_1.0.0_amd64.deb" class="btn-outline" target="_blank">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="4" y="4" width="16" height="16" rx="2"></rect>
               <line x1="12" y1="8" x2="12" y2="16"></line>
               <line x1="8" y1="12" x2="16" y2="12"></line>
@@ -894,7 +910,7 @@
             تحميل للينكس (Linux .deb)
           </a>
         </div>
-      </section>
+      </div>
     </div>
 
     <!-- Footer -->
@@ -903,6 +919,7 @@
         <p>جميع الحقوق محفوظة &copy; 2026 - برنامج رصد الشهري للمدارس الابتدائية والإعدادية</p>
       </div>
     </footer>
+
   </div>
 
 </body>
