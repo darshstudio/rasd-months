@@ -178,21 +178,25 @@ class _ReportsViewState extends State<ReportsView> with SingleTickerProviderStat
   final _hScrollController2 = ScrollController();
 
   void _insertVariableIntoActiveField(String variableTag) {
-    final controller = _activeTextController ?? _reportNotesCtrl;
-    final text = controller.text;
-    final selection = controller.selection;
-    if (selection.isValid && selection.start >= 0) {
-      final newText = text.replaceRange(selection.start, selection.end, variableTag);
-      controller.text = newText;
-      controller.selection = TextSelection.collapsed(offset: selection.start + variableTag.length);
-    } else {
-      controller.text = '$text $variableTag';
-    }
-    setState(() {});
+    if (!mounted) return;
+    try {
+      final controller = _activeTextController ?? _reportNotesCtrl;
+      final text = controller.text;
+      final selection = controller.selection;
+      if (selection.isValid && selection.start >= 0) {
+        final newText = text.replaceRange(selection.start, selection.end, variableTag);
+        controller.text = newText;
+        controller.selection = TextSelection.collapsed(offset: selection.start + variableTag.length);
+      } else {
+        controller.text = '$text $variableTag';
+      }
+      setState(() {});
+    } catch (_) {}
   }
 
   @override
   void dispose() {
+    _activeTextController = null;
     _hScrollController1.dispose();
     _hScrollController2.dispose();
     _tabController.dispose();
@@ -383,6 +387,7 @@ class _ReportsViewState extends State<ReportsView> with SingleTickerProviderStat
                   const Text('تصفية الفصل: ', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(width: 6),
                   AppDropdown<String>(
+                    width: 170,
                     value: _selectedClass,
                     items: [
                       const DropdownMenuItem(value: 'الكل', child: Text('جميع الفصول')),
@@ -396,6 +401,7 @@ class _ReportsViewState extends State<ReportsView> with SingleTickerProviderStat
                   const Text('الفصل الدراسي: ', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(width: 6),
                   AppDropdown<int>(
+                    width: 190,
                     value: _selectedTerm,
                     items: const [
                       DropdownMenuItem(value: 1, child: Text('الفصل الدراسي الأول')),
@@ -574,6 +580,7 @@ class _ReportsViewState extends State<ReportsView> with SingleTickerProviderStat
                   const Text('الشهر: ', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(width: 6),
                   AppDropdown<int>(
+                    width: 170,
                     value: _certSelectedMonth,
                     items: const [
                       DropdownMenuItem(value: 1, child: Text('درجات شهر 1')),
@@ -590,6 +597,7 @@ class _ReportsViewState extends State<ReportsView> with SingleTickerProviderStat
                   const SizedBox(width: 6),
                   if (studentProv.students.isNotEmpty)
                     AppDropdown<Student>(
+                      width: 220,
                       value: _selectedStudent ?? studentProv.students.first,
                       items: studentProv.students
                           .map((s) => DropdownMenuItem(value: s, child: Text('${s.name} (${s.seatingNumber})')))

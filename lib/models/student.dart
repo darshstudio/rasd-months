@@ -40,4 +40,15 @@ class Student {
       classId: map['class_id'] as int?,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Student &&
+          runtimeType == other.runtimeType &&
+          seatingNumber == other.seatingNumber &&
+          stage == other.stage;
+
+  @override
+  int get hashCode => seatingNumber.hashCode ^ stage.hashCode;
 }

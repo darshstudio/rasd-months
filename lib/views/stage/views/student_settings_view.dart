@@ -174,6 +174,7 @@ class _StudentSettingsViewState extends State<StudentSettingsView> {
 
               // Class filter dropdown
               AppDropdown<String>(
+                width: 170,
                 value: _selectedClass,
                 items: [
                   const DropdownMenuItem(value: 'الكل', child: Text('جميع الفصول')),
@@ -376,6 +377,7 @@ class _StudentSettingsViewState extends State<StudentSettingsView> {
   void _showBatchMoveDialog(BuildContext context) {
     String targetStage = _getNextGradeLevel(widget.gradeLevel);
     String targetClassName = '1';
+    final classNameController = TextEditingController(text: targetClassName);
 
     showDialog(
       context: context,
@@ -393,13 +395,14 @@ class _StudentSettingsViewState extends State<StudentSettingsView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "حدد الصف والفصل المستهدف لنقل أو تعديل الطلاب المحددين جماعياً:",
+                 "حدد الصف والفصل المستهدف لنقل أو تعديل الطلاب المحددين جماعياً:",
                 style: TextStyle(fontSize: 13, color: AppColors.secondaryDark),
               ),
               const SizedBox(height: 16),
               const Text('الصف الدراسي المستهدف:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 6),
               AppDropdown<String>(
+                width: 220,
                 value: targetStage,
                 items: _allGradeLevels.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
                 onChanged: (val) {
@@ -410,7 +413,7 @@ class _StudentSettingsViewState extends State<StudentSettingsView> {
               const Text('رقم/اسم الفصل المستهدف:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 6),
               TextField(
-                controller: TextEditingController(text: targetClassName),
+                controller: classNameController,
                 onChanged: (val) => targetClassName = val.trim(),
                 decoration: const InputDecoration(
                   hintText: "مثال: 1 أو 2 أو 5/1",
@@ -421,7 +424,10 @@ class _StudentSettingsViewState extends State<StudentSettingsView> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(ctx),
+              onPressed: () {
+                classNameController.dispose();
+                Navigator.pop(ctx);
+              },
               child: const Text('إلغاء'),
             ),
             ElevatedButton.icon(
@@ -433,10 +439,14 @@ class _StudentSettingsViewState extends State<StudentSettingsView> {
                 final messenger = ScaffoldMessenger.of(this.context);
                 final studentProvider = Provider.of<StudentProvider>(this.context, listen: false);
 
+                final enteredClass = classNameController.text.trim();
+                classNameController.dispose();
+                nav.pop();
+
                 final success = await studentProvider.batchUpdateStudentsClass(
                   studentIds: _selectedStudentIds.toList(),
                   targetStage: targetStage,
-                  targetClassName: targetClassName.isEmpty ? '1' : targetClassName,
+                  targetClassName: enteredClass.isEmpty ? '1' : enteredClass,
                   currentGradeLevel: widget.gradeLevel,
                 );
 

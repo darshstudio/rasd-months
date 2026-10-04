@@ -41,4 +41,16 @@ class Subject {
           : AssessmentType.grades,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Subject &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          gradeLevel == other.gradeLevel;
+
+  @override
+  int get hashCode => (id ?? 0).hashCode ^ name.hashCode ^ gradeLevel.hashCode;
 }

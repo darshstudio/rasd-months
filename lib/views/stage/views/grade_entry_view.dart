@@ -46,20 +46,23 @@ class _GradeEntryViewState extends State<GradeEntryView> {
     final subjectProvider = Provider.of<SubjectProvider>(context, listen: false);
 
     await classProvider.loadClassesForGrade(widget.gradeLevel, widget.gradeLevel);
+    if (!mounted) return;
     await subjectProvider.loadSubjectsForGrade(widget.gradeLevel);
+    if (!mounted) return;
 
-    _selectedClass = 'الكل';
-
-    if (subjectProvider.subjects.isNotEmpty) {
-      _selectedSubject = subjectProvider.subjects.first;
+    if (mounted) {
+      setState(() {
+        _selectedClass = 'الكل';
+        if (subjectProvider.subjects.isNotEmpty) {
+          _selectedSubject = subjectProvider.subjects.first;
+        }
+      });
+      _refreshGrid();
     }
-
-    _refreshGrid();
   }
 
   void _refreshGrid() {
-    _clearFocusNodes();
-    if (_selectedSubject != null && _selectedClass != null) {
+    if (_selectedSubject != null && _selectedClass != null && mounted) {
       final gradeProvider = Provider.of<GradeProvider>(context, listen: false);
       gradeProvider.loadGradeData(
         gradeLevel: widget.gradeLevel,
@@ -72,23 +75,16 @@ class _GradeEntryViewState extends State<GradeEntryView> {
 
   FocusNode _getFocusNode(int rowIndex, int colIndex) {
     final key = '$rowIndex-$colIndex';
-    if (!_focusNodes.containsKey(key)) {
-      _focusNodes[key] = FocusNode();
-    }
-    return _focusNodes[key]!;
-  }
-
-  void _clearFocusNodes() {
-    for (final node in _focusNodes.values) {
-      node.dispose();
-    }
-    _focusNodes.clear();
+    return _focusNodes.putIfAbsent(key, () => FocusNode());
   }
 
   @override
   void dispose() {
     _hScrollController.dispose();
-    _clearFocusNodes();
+    for (final node in _focusNodes.values) {
+      node.dispose();
+    }
+    _focusNodes.clear();
     super.dispose();
   }
 
@@ -199,6 +195,7 @@ class _GradeEntryViewState extends State<GradeEntryView> {
                     const Text('المادة: ', style: TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(width: 6),
                     AppDropdown<Subject>(
+                      width: 220,
                       value: _selectedSubject,
                       items: subjectProvider.subjects
                           .map((s) => DropdownMenuItem(value: s, child: Text(s.name)))
@@ -216,6 +213,7 @@ class _GradeEntryViewState extends State<GradeEntryView> {
                     const Text('الفصل: ', style: TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(width: 6),
                     AppDropdown<String>(
+                      width: 180,
                       value: _selectedClass,
                       items: [
                         const DropdownMenuItem(value: 'الكل', child: Text('الكل (المرحلة كاملة)')),
@@ -234,6 +232,7 @@ class _GradeEntryViewState extends State<GradeEntryView> {
                     const Text('عرض / رصد الشهر: ', style: TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(width: 6),
                     AppDropdown<int>(
+                      width: 230,
                       value: _selectedMonth,
                       items: const [
                         DropdownMenuItem(value: 1, child: Text('شهر 1')),
@@ -342,6 +341,7 @@ class _GradeEntryViewState extends State<GradeEntryView> {
               DataCell(
                 AppDropdown<String>(
                   height: 38,
+                  width: 120,
                   value: currentStatus,
                   items: const [
                     DropdownMenuItem(value: 'اجتاز', child: Text('اجتاز', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))),
@@ -446,6 +446,7 @@ class _GradeEntryViewState extends State<GradeEntryView> {
             cells.add(
               DataCell(
                 _ScoreInputField(
+                  key: ValueKey('score_${student.seatingNumber}_${itemId}_$_selectedMonth'),
                   focusNode: _getFocusNode(rIndex, cIndex),
                   initialValue: currentScore,
                   maxScore: item.maxScore,
@@ -695,6 +696,7 @@ class _ScoreInputField extends StatefulWidget {
   final ValueChanged<double?> onSubmitted;
 
   const _ScoreInputField({
+    super.key,
     required this.focusNode,
     required this.initialValue,
     required this.maxScore,
@@ -723,14 +725,18 @@ class _ScoreInputFieldState extends State<_ScoreInputField> {
   }
 
   void _onFocusChange() {
-    if (widget.focusNode.hasFocus && mounted) {
+    if (!mounted) return;
+    if (widget.focusNode.hasFocus) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _controller.text.isNotEmpty) {
-          _controller.selection = TextSelection(
-            baseOffset: 0,
-            extentOffset: _controller.text.length,
-          );
-        }
+        if (!mounted) return;
+        try {
+          if (_controller.text.isNotEmpty) {
+            _controller.selection = TextSelection(
+              baseOffset: 0,
+              extentOffset: _controller.text.length,
+            );
+          }
+        } catch (_) {}
       });
     }
   }
@@ -739,17 +745,24 @@ class _ScoreInputFieldState extends State<_ScoreInputField> {
   void didUpdateWidget(covariant _ScoreInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.focusNode != widget.focusNode) {
-      oldWidget.focusNode.removeListener(_onFocusChange);
+      try {
+        oldWidget.focusNode.removeListener(_onFocusChange);
+      } catch (_) {}
       widget.focusNode.addListener(_onFocusChange);
     }
     if (oldWidget.initialValue != widget.initialValue && !widget.focusNode.hasFocus) {
-      _controller.text = widget.initialValue != null ? widget.initialValue!.toString() : '';
+      final newText = widget.initialValue != null ? widget.initialValue!.toString() : '';
+      if (_controller.text != newText) {
+        _controller.text = newText;
+      }
     }
   }
 
   @override
   void dispose() {
-    widget.focusNode.removeListener(_onFocusChange);
+    try {
+      widget.focusNode.removeListener(_onFocusChange);
+    } catch (_) {}
     _controller.dispose();
     super.dispose();
   }
